@@ -3,21 +3,23 @@ import { getSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { logout } from '@/app/actions/auth'
 import { Avatar } from './avatar'
+import { NotificationBell } from './notification-bell'
 import {
   Home, MessageSquare, Users, Heart, Plus, Shield,
   Scale, BookOpen, LogOut, Zap, ExternalLink,
-  ChevronRight, Layers, Star,
+  ChevronRight, Star,
 } from 'lucide-react'
 
 export async function Navbar() {
   const session = await getSession()
 
-  const [categories, threadCount, jurisCount, fundamentoCount, usefulLinks] = await Promise.all([
+  const [categories, threadCount, jurisCount, fundamentoCount, usefulLinks, unreadCount] = await Promise.all([
     db.category.findMany({ orderBy: { name: 'asc' }, include: { _count: { select: { threads: true } } } }),
     db.thread.count(),
     db.jurisprudence.count(),
     db.fundamento.count(),
     db.usefulLink.findMany({ orderBy: { order: 'asc' } }),
+    session ? db.notification.count({ where: { userId: session.userId, read: false } }) : Promise.resolve(0),
   ])
 
   return (
@@ -120,20 +122,23 @@ export async function Navbar() {
       {/* User footer */}
       {session && (
         <div className="p-3 border-t border-[#dce8ff]">
-          <Link href={`/perfil/${session.userId}`}
-            className="flex items-center gap-2.5 px-2 py-2 rounded-xl hover:bg-brand-50 transition-colors group cursor-pointer">
-            <Avatar name={session.name} size="sm" />
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-semibold text-gray-800 truncate">{session.name}</p>
-              <p className="text-[10px] text-[#94a3b8] truncate">{session.email}</p>
-            </div>
+          <div className="flex items-center gap-1 mb-1">
+            <Link href={`/perfil/${session.userId}`}
+              className="flex items-center gap-2.5 px-2 py-2 rounded-xl hover:bg-brand-50 transition-colors group cursor-pointer flex-1 min-w-0">
+              <Avatar name={session.name} size="sm" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-gray-800 truncate">{session.name}</p>
+                <p className="text-[10px] text-[#94a3b8] truncate">{session.email}</p>
+              </div>
+            </Link>
+            <NotificationBell initialUnread={unreadCount} />
             <form action={logout}>
               <button type="submit" title="Sair"
-                className="opacity-0 group-hover:opacity-100 transition-opacity text-gray-300 hover:text-red-400 p-1">
+                className="text-gray-300 hover:text-red-400 p-2 transition-colors">
                 <LogOut size={14} />
               </button>
             </form>
-          </Link>
+          </div>
         </div>
       )}
     </aside>

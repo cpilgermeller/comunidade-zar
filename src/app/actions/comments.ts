@@ -17,9 +17,41 @@ export async function createComment(formData: FormData) {
   const thread = await db.thread.findUnique({ where: { id: threadId } })
   if (!thread || thread.locked) return { error: 'Esta discussão está encerrada.' }
 
-  await db.comment.create({
+  const comment = await db.comment.create({
     data: { body, threadId, authorId: session.userId, parentId },
   })
+
+  const link = `/discussoes/${threadId}#comment-${comment.id}`
+  const actorName = session.name.split(' ')[0]
+
+  // Notifica o autor da discussão (se não for o próprio)
+  if (thread.authorId !== session.userId) {
+    await db.notification.create({
+      data: {
+        userId: thread.authorId,
+        actorId: session.userId,
+        type: 'thread_reply',
+        title: `${actorName} respondeu sua discussão "${thread.title.slice(0, 50)}${thread.title.length > 50 ? '…' : ''}"`,
+        link,
+      },
+    })
+  }
+
+  // Notifica o autor do comentário pai (se for reply e não for o próprio)
+  if (parentId) {
+    const parent = await db.comment.findUnique({ where: { id: parentId } })
+    if (parent && parent.authorId !== session.userId && parent.authorId !== thread.authorId) {
+      await db.notification.create({
+        data: {
+          userId: parent.authorId,
+          actorId: session.userId,
+          type: 'comment_reply',
+          title: `${actorName} respondeu seu comentário em "${thread.title.slice(0, 50)}${thread.title.length > 50 ? '…' : ''}"`,
+          link,
+        },
+      })
+    }
+  }
 
   revalidatePath(`/discussoes/${threadId}`)
 }

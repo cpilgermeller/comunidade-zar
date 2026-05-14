@@ -5,7 +5,7 @@ const SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET ?? 'fallback-secret'
 )
 
-const PUBLIC_PATHS = ['/login', '/api']
+const PUBLIC_PATHS = ['/login', '/definir-senha', '/api']
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl
