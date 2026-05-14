@@ -98,90 +98,51 @@ export default async function MembrosPage({
 
                 return (
                   <Link key={user.id} href={`/perfil/${user.id}`}>
-                    <div className={`relative bg-white rounded-2xl p-4 hover:shadow-md transition-all group overflow-hidden
+                    <div className={`relative bg-white rounded-2xl px-5 py-4 hover:shadow-md transition-all group
                       ${isLifetime
-                        ? 'border border-amber-300 shadow-sm shadow-amber-100 hover:shadow-amber-200/60'
-                        : 'border border-[#f0eae6] hover:border-brand-200'}`}>
+                        ? 'border border-amber-200 shadow-sm shadow-amber-50 hover:shadow-amber-100'
+                        : 'border border-[#f0eae6] hover:border-brand-100'}`}>
 
-                      {/* Faixa decorativa vitalício */}
-                      {isLifetime && (
-                        <div className="absolute inset-0 pointer-events-none">
-                          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-70" />
-                        </div>
-                      )}
-
-                      <div className="flex items-start gap-4">
+                      <div className="flex items-center gap-4">
                         {/* Avatar */}
                         <div className="shrink-0">
-                          <div className="w-14 h-14 rounded-[10px] overflow-hidden border border-[#ede8e3]">
+                          <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#ede8e3]">
                             {user.avatar
                               ? <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                              : <Avatar name={user.name} size="lg" />}
+                              : <Avatar name={user.name} size="md" />}
                           </div>
                         </div>
 
+                        {/* Info principal */}
                         <div className="flex-1 min-w-0">
-                          {/* Nome + badges */}
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <p className={`font-bold transition-colors ${isLifetime ? 'text-gray-900 group-hover:text-gray-700' : 'text-gray-900 group-hover:text-brand-800'}`}>
-                                {user.name}
-                              </p>
-
-                              {/* Badge Vitalício */}
-                              {isLifetime && (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 border border-amber-300 text-amber-900 tracking-wide">
-                                  ✦ Vitalício
-                                </span>
-                              )}
-
-                              {/* Badge Admin */}
-                              {user.role === 'admin' && (
-                                <span className="text-[10px] font-bold text-gold-600 bg-gold-50 border border-gold-200 px-1.5 py-0.5 rounded-full">Admin ZAR</span>
-                              )}
-                            </div>
-
-                            <div className="flex items-center gap-3 text-xs text-[#b5a9a4] shrink-0">
-                              {user.state && (
-                                <span className="flex items-center gap-0.5"><MapPin size={10} /> {user.state}</span>
-                              )}
-                              <span className="text-[11px]">{user._count.threads}t · {user._count.comments}r</span>
-                            </div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-semibold text-gray-900 group-hover:text-brand-800 transition-colors truncate">
+                              {user.name}
+                            </p>
+                            {isLifetime && (
+                              <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 tracking-wide shrink-0">
+                                ✦ Vitalício
+                              </span>
+                            )}
+                            {user.role === 'admin' && (
+                              <span className="text-[10px] font-bold text-brand-700 bg-brand-50 border border-brand-100 px-1.5 py-0.5 rounded-full shrink-0">Admin</span>
+                            )}
                           </div>
 
-                          {user.bio && (
-                            <p className="text-sm text-gray-500 mt-1 line-clamp-1">{user.bio}</p>
-                          )}
-
-                          {/* Áreas de atuação */}
-                          {areas.length > 0 && (
-                            <div className="flex flex-wrap gap-1 mt-2">
-                              {areas.slice(0, 3).map((area) => (
-                                <span key={area} className={`text-[11px] px-2 py-0.5 rounded-full border
-                                  ${isLifetime
-                                    ? 'bg-gray-50 text-gray-700 border-gray-200'
-                                    : 'bg-brand-50 text-brand-800 border-brand-100'}`}>
-                                  {area}
-                                </span>
-                              ))}
-                              {areas.length > 3 && (
-                                <span className="text-[11px] text-[#b5a9a4]">+{areas.length - 3}</span>
-                              )}
-                            </div>
-                          )}
+                          {/* Bio ou áreas */}
+                          {user.bio ? (
+                            <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">{user.bio}</p>
+                          ) : areas.length > 0 ? (
+                            <p className="text-xs text-gray-400 mt-0.5 truncate">{areas.slice(0, 2).join(' · ')}</p>
+                          ) : null}
 
                           {/* Insígnias */}
                           {user.insignias.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 mt-2">
+                            <div className="flex flex-wrap gap-1 mt-1.5">
                               {user.insignias.map(({ insignia }) => (
                                 <span key={insignia.id}
-                                  title={insignia.name}
-                                  className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full border"
-                                  style={{
-                                    backgroundColor: insignia.color + '15',
-                                    borderColor: insignia.color + '50',
-                                    color: insignia.color,
-                                  }}>
+                                  className="inline-flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded-full border"
+                                  style={{ backgroundColor: insignia.color + '12', borderColor: insignia.color + '40', color: insignia.color }}>
                                   {insignia.emoji} {insignia.name}
                                 </span>
                               ))}
@@ -189,17 +150,13 @@ export default async function MembrosPage({
                           )}
                         </div>
 
-                        {/* Links de contato */}
-                        <div className="flex flex-col gap-1 shrink-0">
-                          {user.instagram && (
-                            <span className="flex items-center gap-1 text-[11px] text-brand-700">
-                              <Link2 size={10} />
-                            </span>
+                        {/* Metadados à direita */}
+                        <div className="flex items-center gap-3 text-[11px] text-[#c8bbb6] shrink-0">
+                          {user.state && (
+                            <span className="flex items-center gap-0.5"><MapPin size={10} /> {user.state}</span>
                           )}
-                          {user.contactEmail && (
-                            <span className="flex items-center gap-1 text-[11px] text-brand-700">
-                              <Mail size={10} />
-                            </span>
+                          {(user._count.threads > 0 || user._count.comments > 0) && (
+                            <span>{user._count.threads}t · {user._count.comments}r</span>
                           )}
                         </div>
                       </div>
