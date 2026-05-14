@@ -161,10 +161,13 @@ export function EditProfileForm({ user }: { user: UserData }) {
 
         {/* Áreas */}
         <div>
-          <label className={labelCls}>Áreas de atuação</label>
-          <input name="areas" defaultValue={user.areas ?? ''} placeholder="Ex: Direito do Consumidor, Previdenciário, Trabalhista"
-            className={inputCls} />
-          <p className="text-[11px] text-[#94a3b8] mt-1">Separe por vírgulas. Aparecem como tags no seu perfil.</p>
+          <label className={labelCls}>Ações que você trabalha</label>
+          <textarea name="areas" rows={3} defaultValue={user.areas ?? ''}
+            placeholder="Ex: Revisional de financiamento de veículo, Revisional de empréstimo consignado servidor público, Defesa em busca e apreensão"
+            className={inputCls + ' resize-none'} />
+          <p className="text-[11px] text-[#94a3b8] mt-1.5 leading-relaxed">
+            Especifique quais ações você trabalha dentro do Direito Bancário para que os colegas possam identificar e buscar parcerias de forma objetiva. Separe por vírgulas — aparecem como tags no seu perfil.
+          </p>
         </div>
 
         {/* Instagram */}

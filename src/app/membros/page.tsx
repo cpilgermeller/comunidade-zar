@@ -100,23 +100,25 @@ export default async function MembrosPage({
                   <Link key={user.id} href={`/perfil/${user.id}`}>
                     <div className={`relative bg-white rounded-2xl p-4 hover:shadow-md transition-all group overflow-hidden
                       ${isLifetime
-                        ? 'border border-gray-800 shadow-sm shadow-gray-300/50 hover:shadow-gray-400/40'
+                        ? 'border border-amber-300 shadow-sm shadow-amber-100 hover:shadow-amber-200/60'
                         : 'border border-[#f0eae6] hover:border-brand-200'}`}>
 
                       {/* Faixa decorativa vitalício */}
                       {isLifetime && (
                         <div className="absolute inset-0 pointer-events-none">
-                          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent opacity-60" />
+                          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent opacity-70" />
                         </div>
                       )}
 
                       <div className="flex items-start gap-4">
                         {/* Avatar */}
-                        <div className="shrink-0 relative">
-                          <div className={`w-14 h-14 rounded-xl overflow-hidden ${isLifetime ? 'ring-2 ring-gray-700 ring-offset-1' : 'border border-[#ede8e3]'}`}>
-                            {user.avatar
-                              ? <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                              : <Avatar name={user.name} size="lg" />}
+                        <div className="shrink-0">
+                          <div className={`p-0.5 rounded-xl ${isLifetime ? 'bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500' : ''}`}>
+                            <div className={`w-14 h-14 rounded-[10px] overflow-hidden ${isLifetime ? '' : 'border border-[#ede8e3]'}`}>
+                              {user.avatar
+                                ? <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                                : <Avatar name={user.name} size="lg" />}
+                            </div>
                           </div>
                         </div>
 
@@ -130,7 +132,7 @@ export default async function MembrosPage({
 
                               {/* Badge Vitalício */}
                               {isLifetime && (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-900 text-white tracking-wide">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 text-white tracking-wide shadow-sm">
                                   ✦ Vitalício
                                 </span>
                               )}
