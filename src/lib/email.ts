@@ -1,8 +1,5 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
-const FROM = process.env.RESEND_FROM ?? 'Comunidade ZAR <noreply@resend.dev>'
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://comunidade-zar.vercel.app'
 
 export async function sendWelcomeEmail({
@@ -14,6 +11,8 @@ export async function sendWelcomeEmail({
   name: string
   token: string
 }) {
+  const resend = new Resend(process.env.RESEND_API_KEY)
+  const FROM = process.env.RESEND_FROM ?? 'Comunidade ZAR <onboarding@resend.dev>'
   const url = `${BASE_URL}/definir-senha?token=${token}`
 
   await resend.emails.send({
