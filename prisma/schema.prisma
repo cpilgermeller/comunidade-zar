@@ -1,0 +1,200 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id              String    @id @default(cuid())
+  name            String
+  email           String    @unique
+  password        String
+  avatar          String?
+  bio             String?
+  instagram       String?
+  contactEmail    String?
+  phone           String?
+  state           String?   // comma-separated UFs, e.g. "SP,RJ" or "BR"
+  areas           String?
+  role            String    @default("member")
+  blocked         Boolean   @default(false)
+  accessExpiresAt DateTime?
+  memberSince     DateTime?
+  isLifetime      Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  threads         Thread[]
+  comments        Comment[]
+  likes           Like[]
+  announcements   Announcement[]
+  events          Event[]
+  jurisprudences  Jurisprudence[]
+  fundamentos     Fundamento[]
+  fundamentoLikes FundamentoLike[]
+  insignias       UserInsignia[]
+  testimonials    Testimonial[]
+}
+
+model Insignia {
+  id          String         @id @default(cuid())
+  name        String         @unique
+  description String?
+  emoji       String         @default("🏅")
+  color       String         @default("#9f1030")
+  createdAt   DateTime       @default(now())
+  users       UserInsignia[]
+}
+
+model UserInsignia {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  insigniaId String
+  insignia   Insignia @relation(fields: [insigniaId], references: [id], onDelete: Cascade)
+  assignedAt DateTime @default(now())
+
+  @@unique([userId, insigniaId])
+}
+
+model Category {
+  id          String  @id @default(cuid())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  color       String  @default("#6366f1")
+
+  threads Thread[]
+}
+
+model Thread {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  pinned    Boolean  @default(false)
+  locked    Boolean  @default(false)
+  views     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id])
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  comments Comment[]
+  likes    Like[]
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id])
+  threadId String
+  thread   Thread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+
+  parentId String?
+  parent   Comment?  @relation("Replies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies  Comment[] @relation("Replies")
+
+  likes Like[]
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  threadId  String?
+  thread    Thread?  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, threadId])
+  @@unique([userId, commentId])
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  pinned    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  link        String?
+  eventDate   DateTime
+  createdAt   DateTime @default(now())
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+}
+
+model Jurisprudence {
+  id           String    @id @default(cuid())
+  title        String
+  tribunal     String
+  subject      String
+  body         String
+  sourceLink   String?
+  decisionDate DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  authorId     String
+  author       User      @relation(fields: [authorId], references: [id])
+}
+
+model Fundamento {
+  id             String           @id @default(cuid())
+  title          String
+  allegationType String
+  body           String
+  isOfficial     Boolean          @default(false)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  authorId       String
+  author         User             @relation(fields: [authorId], references: [id])
+  likes          FundamentoLike[]
+}
+
+model FundamentoLike {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+  fundamentoId String
+  fundamento   Fundamento @relation(fields: [fundamentoId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([userId, fundamentoId])
+}
+
+model UsefulLink {
+  id        String   @id @default(cuid())
+  label     String
+  url       String
+  emoji     String   @default("🔗")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  body      String   // rich text HTML
+  imageUrl  String?  // optional result photo
+  createdAt DateTime @default(now())
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+}
