@@ -49,12 +49,18 @@ export default function TestimonialForm({
     <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
       {/* Rich text editor */}
       <div>
-        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Seu depoimento</p>
+        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Sua história de transformação</p>
+        <p className="text-xs text-[#94a3b8] mb-2 leading-relaxed">
+          Conte como era antes, qual foi o momento de virada, quais resultados você conquistou e como a Comunidade ZAR impactou sua prática. Inspire quem está começando com sua jornada real! ✦
+        </p>
         <RichTextEditor
           content={existing ?? ''}
           onChange={setBody}
-          placeholder="Como a Comunidade ZAR transformou sua advocacia? Conte sua história com detalhes — seus resultados, o que aprendeu, como cresceu..."
+          placeholder="Conte sua história de transformação dentro do Direito Bancário. Como era antes? Qual foi o momento de virada? Quais resultados você conquistou? Que casos você passou a dominar? Como a comunidade impactou sua prática e seus ganhos? Inspire os colegas com sua jornada real."
         />
+        <p className="text-[11px] text-[#94a3b8] mt-2">
+          Mínimo de 300 caracteres — depoimentos detalhados inspiram e transformam quem está começando.
+        </p>
       </div>
 
       {/* Foto do resultado */}

@@ -16,8 +16,8 @@ export async function createTestimonial(
 
   // Strip HTML tags to check min length
   const textOnly = body.replace(/<[^>]+>/g, '').trim()
-  if (!textOnly || textOnly.length < 20) return { error: 'Depoimento muito curto. Escreva pelo menos 20 caracteres.' }
-  if (textOnly.length > 2000) return { error: 'Depoimento muito longo. Máximo 2000 caracteres.' }
+  if (!textOnly || textOnly.length < 300) return { error: `Depoimento muito curto (${textOnly.length}/300 caracteres mínimos). Conte sua história com mais detalhes — isso inspira toda a comunidade!` }
+  if (textOnly.length > 5000) return { error: 'Depoimento muito longo. Máximo 5000 caracteres.' }
 
   const existing = await db.testimonial.findFirst({ where: { authorId: session.userId } })
   if (existing) {

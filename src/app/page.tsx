@@ -2,12 +2,11 @@ import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { Navbar } from '@/components/navbar'
 import { Avatar } from '@/components/avatar'
-import { RichTextDisplay } from '@/components/rich-text-editor'
-import { formatDate } from '@/lib/utils'
+import { AnnouncementCard } from '@/components/announcement-card'
 import Link from 'next/link'
 import {
   Megaphone, TrendingUp, Trophy,
-  ExternalLink, MessageSquare, Eye, Pin, ChevronRight,
+  ExternalLink, MessageSquare, Eye, ChevronRight,
   ArrowRight, Flame, Star,
 } from 'lucide-react'
 
@@ -29,12 +28,31 @@ export default async function HomePage() {
     }),
     db.user.findMany({
       where: { blocked: false, role: 'member' },
-      include: { _count: { select: { threads: { where: { createdAt: { gte: startOfMonth } } }, comments: { where: { createdAt: { gte: startOfMonth } } } } } },
+      include: {
+        _count: {
+          select: {
+            threads:        { where: { createdAt: { gte: startOfMonth } } },
+            comments:       { where: { createdAt: { gte: startOfMonth } } },
+            jurisprudences: { where: { createdAt: { gte: startOfMonth } } },
+            fundamentos:    { where: { createdAt: { gte: startOfMonth } } },
+            testimonials:   { where: { createdAt: { gte: startOfMonth } } },
+          },
+        },
+      },
     }),
   ])
 
+  // Pontuação: resposta=3 | discussão=2 | juris/fundamento=4 | depoimento=10
   const ranked = rankingUsers
-    .map((u) => ({ ...u, score: u._count.threads * 3 + u._count.comments }))
+    .map((u) => ({
+      ...u,
+      score:
+        u._count.comments       * 3  +
+        u._count.threads        * 2  +
+        u._count.jurisprudences * 4  +
+        u._count.fundamentos    * 4  +
+        u._count.testimonials   * 10,
+    }))
     .filter((u) => u.score > 0).sort((a, b) => b.score - a.score).slice(0, 10)
 
   const medals = ['🥇', '🥈', '🥉']
@@ -86,22 +104,9 @@ export default async function HomePage() {
                     <p className="text-sm text-[#b5a9a4]">Nenhum aviso no momento.</p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-[#f7f2ef] stagger">
+                  <div className="divide-y divide-[#f7f2ef]">
                     {announcements.map((ann) => (
-                      <div key={ann.id} className={`px-5 py-4 ${ann.pinned ? 'bg-gold-50/50' : ''}`}>
-                        <div className="flex items-start gap-2.5">
-                          {ann.pinned && <Pin size={12} className="text-gold-500 fill-gold-400 mt-0.5 shrink-0" />}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2 mb-1.5">
-                              <h3 className="text-sm font-semibold text-gray-900">{ann.title}</h3>
-                              <span className="text-[11px] text-[#b5a9a4] shrink-0">{formatDate(ann.createdAt)}</span>
-                            </div>
-                            <div className="text-sm text-gray-600 line-clamp-3 leading-relaxed">
-                              <RichTextDisplay html={ann.content} />
-                            </div>
-                          </div>
-                        </div>
-                      </div>
+                      <AnnouncementCard key={ann.id} ann={ann} />
                     ))}
                   </div>
                 )}
@@ -228,7 +233,7 @@ export default async function HomePage() {
                   </div>
                 )}
                 <div className="px-5 py-3 border-t border-[#f7f2ef]">
-                  <p className="text-[10px] text-[#d6c8c3] text-center">Tópico = 3pts · Resposta = 1pt</p>
+                  <p className="text-[10px] text-[#d6c8c3] text-center">Resposta=3 · Discussão=2 · Juris/Fund=4 · Depoimento=10</p>
                 </div>
               </div>
             </div>
