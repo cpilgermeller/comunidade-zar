@@ -93,7 +93,7 @@ export default function LoginPage() {
             {/* Frase motivacional */}
             <div className="mt-4 px-4 py-3 bg-gradient-to-r from-brand-50 to-gold-50 rounded-2xl border border-brand-100/60">
               <p className="text-xs text-gray-500 leading-relaxed italic">
-                "Cada acesso te leva a um passo mais próximo da sua melhor versão."
+                Cada acesso te leva a um passo mais próximo da sua melhor versão.
               </p>
             </div>
           </div>
