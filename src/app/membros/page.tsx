@@ -4,6 +4,7 @@ import { Navbar } from '@/components/navbar'
 import { Avatar } from '@/components/avatar'
 import { Link2, Mail, MapPin, Search, Users } from 'lucide-react'
 import Link from 'next/link'
+import { getRank } from '@/lib/rank'
 
 const STATES = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']
 
@@ -95,6 +96,7 @@ export default async function MembrosPage({
               {users.map((user) => {
                 const areas = user.areas?.split(',').map((a) => a.trim()).filter(Boolean) ?? []
                 const isLifetime = user.isLifetime
+                const rank = getRank(user.memberSince)
 
                 return (
                   <Link key={user.id} href={`/perfil/${user.id}`}>
@@ -127,6 +129,11 @@ export default async function MembrosPage({
                             {user.role === 'admin' && (
                               <span className="text-[10px] font-bold text-brand-700 bg-brand-50 border border-brand-100 px-1.5 py-0.5 rounded-full shrink-0">Admin</span>
                             )}
+                            <span
+                              className="text-[10px] font-semibold px-2 py-0.5 rounded-full border shrink-0"
+                              style={{ backgroundColor: rank.color + '12', borderColor: rank.color + '40', color: rank.color }}>
+                              {rank.emoji} {rank.name}
+                            </span>
                           </div>
 
                           {/* Bio ou áreas */}

@@ -10,14 +10,7 @@ import {
   ChevronLeft, Shield, Star, X, Infinity, Calendar,
 } from 'lucide-react'
 import Link from 'next/link'
-
-function tenureBadge(since: Date): { label: string; emoji: string } {
-  const months = Math.floor((Date.now() - since.getTime()) / (1000 * 60 * 60 * 24 * 30))
-  if (months < 3)  return { label: 'Novata(o)', emoji: '🌱' }
-  if (months < 12) return { label: 'Membro ZAR', emoji: '⭐' }
-  if (months < 24) return { label: 'Veterana(o)', emoji: '🏆' }
-  return { label: 'Fundadora(or)', emoji: '👑' }
-}
+import { getRank } from '@/lib/rank'
 
 export default async function PerfilPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -40,7 +33,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ id: str
     ? ['🇧🇷 Brasil inteiro']
     : (user.state?.split(',').map((s) => s.trim()).filter(Boolean) ?? [])
 
-  const tenure = user.memberSince ? tenureBadge(user.memberSince) : null
+  const rank = getRank(user.memberSince)
 
   return (
     <div className="flex h-full">
@@ -93,11 +86,11 @@ export default async function PerfilPage({ params }: { params: Promise<{ id: str
                     <Infinity size={10} /> Vitalício
                   </span>
                 )}
-                {tenure && (
-                  <span className="text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 px-2 py-0.5 rounded-full">
-                    {tenure.emoji} {tenure.label}
-                  </span>
-                )}
+                <Link href="/trilha"
+                  className="text-xs font-semibold px-2 py-0.5 rounded-full border transition-colors hover:opacity-80"
+                  style={{ backgroundColor: rank.color + '15', borderColor: rank.color + '50', color: rank.color }}>
+                  {rank.emoji} {rank.name}
+                </Link>
               </div>
 
               {user.bio && <p className="text-sm text-gray-600 mt-3 leading-relaxed">{user.bio}</p>}
