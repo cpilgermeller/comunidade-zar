@@ -2,7 +2,7 @@ import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { Navbar } from '@/components/navbar'
 import { Avatar } from '@/components/avatar'
-import { Link2, Mail, MapPin, Briefcase, Search, Users } from 'lucide-react'
+import { Link2, Mail, MapPin, Search, Users } from 'lucide-react'
 import Link from 'next/link'
 
 const STATES = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO']
@@ -27,7 +27,7 @@ export default async function MembrosPage({
         insignias: { include: { insignia: true } },
         _count: { select: { threads: true, comments: true } },
       },
-      orderBy: { name: 'asc' },
+      orderBy: [{ isLifetime: 'desc' }, { name: 'asc' }],
     }),
     db.insignia.findMany({ orderBy: { name: 'asc' } }),
   ])
@@ -94,28 +94,53 @@ export default async function MembrosPage({
             <div className="grid grid-cols-1 gap-3 stagger">
               {users.map((user) => {
                 const areas = user.areas?.split(',').map((a) => a.trim()).filter(Boolean) ?? []
+                const isLifetime = user.isLifetime
+
                 return (
                   <Link key={user.id} href={`/perfil/${user.id}`}>
-                    <div className="bg-white border border-[#f0eae6] rounded-2xl p-4 hover:border-brand-200 hover:shadow-md transition-all group">
+                    <div className={`relative bg-white rounded-2xl p-4 hover:shadow-md transition-all group overflow-hidden
+                      ${isLifetime
+                        ? 'border border-gray-800 shadow-sm shadow-gray-300/50 hover:shadow-gray-400/40'
+                        : 'border border-[#f0eae6] hover:border-brand-200'}`}>
+
+                      {/* Faixa decorativa vitalício */}
+                      {isLifetime && (
+                        <div className="absolute inset-0 pointer-events-none">
+                          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-gray-400 to-transparent opacity-60" />
+                        </div>
+                      )}
+
                       <div className="flex items-start gap-4">
-                        <div className="shrink-0">
-                          {user.avatar ? (
-                            <img src={user.avatar} alt={user.name} className="w-14 h-14 rounded-xl object-cover border border-[#ede8e3]" />
-                          ) : (
-                            <div className="w-14 h-14 rounded-xl overflow-hidden border border-[#ede8e3]">
-                              <Avatar name={user.name} size="lg" />
-                            </div>
-                          )}
+                        {/* Avatar */}
+                        <div className="shrink-0 relative">
+                          <div className={`w-14 h-14 rounded-xl overflow-hidden ${isLifetime ? 'ring-2 ring-gray-700 ring-offset-1' : 'border border-[#ede8e3]'}`}>
+                            {user.avatar
+                              ? <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                              : <Avatar name={user.name} size="lg" />}
+                          </div>
                         </div>
 
                         <div className="flex-1 min-w-0">
+                          {/* Nome + badges */}
                           <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <p className="font-bold text-gray-900 group-hover:text-brand-800 transition-colors">{user.name}</p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className={`font-bold transition-colors ${isLifetime ? 'text-gray-900 group-hover:text-gray-700' : 'text-gray-900 group-hover:text-brand-800'}`}>
+                                {user.name}
+                              </p>
+
+                              {/* Badge Vitalício */}
+                              {isLifetime && (
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-gray-900 text-white tracking-wide">
+                                  ✦ Vitalício
+                                </span>
+                              )}
+
+                              {/* Badge Admin */}
                               {user.role === 'admin' && (
                                 <span className="text-[10px] font-bold text-gold-600 bg-gold-50 border border-gold-200 px-1.5 py-0.5 rounded-full">Admin ZAR</span>
                               )}
                             </div>
+
                             <div className="flex items-center gap-3 text-xs text-[#b5a9a4] shrink-0">
                               {user.state && (
                                 <span className="flex items-center gap-0.5"><MapPin size={10} /> {user.state}</span>
@@ -128,11 +153,14 @@ export default async function MembrosPage({
                             <p className="text-sm text-gray-500 mt-1 line-clamp-1">{user.bio}</p>
                           )}
 
-                          {/* Areas */}
+                          {/* Áreas de atuação */}
                           {areas.length > 0 && (
                             <div className="flex flex-wrap gap-1 mt-2">
                               {areas.slice(0, 3).map((area) => (
-                                <span key={area} className="text-[11px] bg-brand-50 text-brand-800 border border-brand-100 px-2 py-0.5 rounded-full">
+                                <span key={area} className={`text-[11px] px-2 py-0.5 rounded-full border
+                                  ${isLifetime
+                                    ? 'bg-gray-50 text-gray-700 border-gray-200'
+                                    : 'bg-brand-50 text-brand-800 border-brand-100'}`}>
                                   {area}
                                 </span>
                               ))}
@@ -142,20 +170,26 @@ export default async function MembrosPage({
                             </div>
                           )}
 
-                          {/* Insignias */}
+                          {/* Insígnias */}
                           {user.insignias.length > 0 && (
-                            <div className="flex gap-1 mt-2">
+                            <div className="flex flex-wrap gap-1.5 mt-2">
                               {user.insignias.map(({ insignia }) => (
-                                <span key={insignia.id} title={insignia.name}
-                                  className="text-base cursor-default" style={{ filter: 'drop-shadow(0 1px 2px rgba(0,0,0,.15))' }}>
-                                  {insignia.emoji}
+                                <span key={insignia.id}
+                                  title={insignia.name}
+                                  className="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full border"
+                                  style={{
+                                    backgroundColor: insignia.color + '15',
+                                    borderColor: insignia.color + '50',
+                                    color: insignia.color,
+                                  }}>
+                                  {insignia.emoji} {insignia.name}
                                 </span>
                               ))}
                             </div>
                           )}
                         </div>
 
-                        {/* Contact quick links */}
+                        {/* Links de contato */}
                         <div className="flex flex-col gap-1 shrink-0">
                           {user.instagram && (
                             <span className="flex items-center gap-1 text-[11px] text-brand-700">
