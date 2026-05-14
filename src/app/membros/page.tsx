@@ -113,12 +113,10 @@ export default async function MembrosPage({
                       <div className="flex items-start gap-4">
                         {/* Avatar */}
                         <div className="shrink-0">
-                          <div className={`p-0.5 rounded-xl ${isLifetime ? 'bg-gradient-to-br from-amber-400 via-yellow-300 to-amber-500' : ''}`}>
-                            <div className={`w-14 h-14 rounded-[10px] overflow-hidden ${isLifetime ? '' : 'border border-[#ede8e3]'}`}>
-                              {user.avatar
-                                ? <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
-                                : <Avatar name={user.name} size="lg" />}
-                            </div>
+                          <div className="w-14 h-14 rounded-[10px] overflow-hidden border border-[#ede8e3]">
+                            {user.avatar
+                              ? <img src={user.avatar} alt={user.name} className="w-full h-full object-cover" />
+                              : <Avatar name={user.name} size="lg" />}
                           </div>
                         </div>
 
@@ -132,7 +130,7 @@ export default async function MembrosPage({
 
                               {/* Badge Vitalício */}
                               {isLifetime && (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-500 to-yellow-400 text-white tracking-wide shadow-sm">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 border border-amber-300 text-amber-900 tracking-wide">
                                   ✦ Vitalício
                                 </span>
                               )}
