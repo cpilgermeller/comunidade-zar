@@ -39,6 +39,44 @@ export async function createUser(
   return { success: true }
 }
 
+export async function updateUser(
+  _prev: { error?: string; success?: boolean } | undefined,
+  formData: FormData
+): Promise<{ error?: string; success?: boolean }> {
+  await requireAdmin()
+
+  const userId = formData.get('userId') as string
+  const name = (formData.get('name') as string).trim()
+  const email = (formData.get('email') as string).trim().toLowerCase()
+  const password = formData.get('password') as string
+  const role = (formData.get('role') as string) || 'member'
+  const accessExpiresRaw = formData.get('accessExpiresAt') as string | null
+  const memberSinceRaw = formData.get('memberSince') as string | null
+  const isLifetime = formData.get('isLifetime') === 'on'
+
+  if (!userId || !name || !email) return { error: 'Preencha os campos obrigatórios.' }
+
+  const conflict = await db.user.findFirst({ where: { email, NOT: { id: userId } } })
+  if (conflict) return { error: 'E-mail já utilizado por outro membro.' }
+
+  const data: Record<string, unknown> = {
+    name,
+    email,
+    role,
+    isLifetime,
+    accessExpiresAt: accessExpiresRaw ? new Date(accessExpiresRaw) : null,
+    memberSince: memberSinceRaw ? new Date(memberSinceRaw) : null,
+  }
+
+  if (password && password.trim() !== '') {
+    data.password = await bcrypt.hash(password, 12)
+  }
+
+  await db.user.update({ where: { id: userId }, data })
+  revalidatePath('/admin')
+  return { success: true }
+}
+
 export async function toggleBlockUser(userId: string) {
   await requireAdmin()
 

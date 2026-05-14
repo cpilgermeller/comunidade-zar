@@ -10,7 +10,7 @@ import { deleteJurisprudence } from '@/app/actions/jurisprudencias'
 import { deleteFundamento } from '@/app/actions/fundamentos'
 import { assignInsignia, deleteInsignia } from '@/app/actions/profile'
 import { deleteUsefulLink } from '@/app/actions/useful-links'
-import { CreateUserForm, CreateCategoryForm } from '@/components/admin-forms'
+import { CreateUserForm, CreateCategoryForm, EditUserButton } from '@/components/admin-forms'
 import { CreateAnnouncementForm, CreateEventForm } from '@/components/admin-home-forms'
 import { CreateInsigniaForm } from '@/components/admin-insignia-forms'
 import { CreateUsefulLinkForm } from '@/components/admin-links-form'
@@ -373,6 +373,15 @@ export default async function AdminPage() {
                         <td className="py-3">
                           {user.id !== session.userId && (
                             <div className="flex gap-2">
+                              <EditUserButton user={{
+                                id: user.id,
+                                name: user.name,
+                                email: user.email,
+                                role: user.role,
+                                isLifetime: user.isLifetime,
+                                accessExpiresAt: user.accessExpiresAt,
+                                memberSince: user.memberSince,
+                              }} />
                               <form action={toggleBlockUser.bind(null, user.id)}>
                                 <button type="submit" className={`text-xs px-2 py-1 rounded-lg border transition-colors ${user.blocked ? 'border-emerald-200 text-emerald-600 hover:bg-emerald-50' : 'border-orange-200 text-orange-600 hover:bg-orange-50'}`}>
                                   {user.blocked ? 'Desbloquear' : 'Bloquear'}
