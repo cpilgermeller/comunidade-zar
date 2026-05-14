@@ -3,7 +3,7 @@
 import { login } from '@/app/actions/auth'
 import { useActionState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Zap, Mail, Lock, ArrowRight, Clock } from 'lucide-react'
+import { Mail, Lock, ArrowRight, Clock } from 'lucide-react'
 import { Suspense } from 'react'
 
 function ExpiredBanner() {
@@ -59,19 +59,46 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#faf7f4] flex items-center justify-center p-4">
+
+      {/* Fundo decorativo */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-100 rounded-full blur-3xl opacity-50" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gold-100 rounded-full blur-3xl opacity-40" />
+        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-brand-100 rounded-full blur-3xl opacity-40" />
+        <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] bg-gold-100 rounded-full blur-3xl opacity-35" />
+        <div className="absolute top-1/3 left-1/4 w-64 h-64 bg-brand-50 rounded-full blur-3xl opacity-60" />
+
+        {/* Estrelas decorativas flutuando */}
+        <span className="absolute top-[12%] left-[18%] text-2xl opacity-20 animate-pulse">✦</span>
+        <span className="absolute top-[20%] right-[22%] text-lg opacity-15 animate-pulse" style={{ animationDelay: '0.8s' }}>✨</span>
+        <span className="absolute top-[65%] left-[12%] text-xl opacity-15 animate-pulse" style={{ animationDelay: '1.4s' }}>✦</span>
+        <span className="absolute top-[75%] right-[16%] text-2xl opacity-20 animate-pulse" style={{ animationDelay: '0.4s' }}>✨</span>
+        <span className="absolute top-[40%] right-[8%] text-sm opacity-10 animate-pulse" style={{ animationDelay: '2s' }}>✦</span>
+        <span className="absolute bottom-[20%] left-[30%] text-sm opacity-10 animate-pulse" style={{ animationDelay: '1.2s' }}>✨</span>
       </div>
 
       <div className="relative w-full max-w-sm animate-fade-in">
         <div className="bg-white rounded-3xl shadow-xl shadow-[#e8d5d0]/60 border border-[#f0eae6] p-8">
+
+          {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-brand-900 to-brand-700 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-200">
-              <Zap size={28} className="text-white fill-white" />
+            {/* Ícone estrela de 4 pontas */}
+            <div className="relative inline-flex mb-5">
+              <div className="w-20 h-20 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600 rounded-2xl flex items-center justify-center shadow-xl shadow-brand-200/60">
+                <span className="text-4xl leading-none select-none" style={{ filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.4))' }}>✦</span>
+              </div>
+              {/* Brilhinhos ao redor */}
+              <span className="absolute -top-1 -right-1 text-base opacity-70">✨</span>
+              <span className="absolute -bottom-1 -left-1 text-sm opacity-50">✦</span>
             </div>
+
             <h1 className="text-2xl font-black text-gray-900 tracking-tight">Comunidade ZAR</h1>
-            <p className="text-sm text-[#b5a9a4] mt-1">Acesse sua conta para continuar</p>
+            <p className="text-sm text-brand-700/70 font-medium mt-1">Transformação começa aqui.</p>
+
+            {/* Frase motivacional */}
+            <div className="mt-4 px-4 py-3 bg-gradient-to-r from-brand-50 to-gold-50 rounded-2xl border border-brand-100/60">
+              <p className="text-xs text-gray-500 leading-relaxed italic">
+                "Cada acesso é um passo rumo à sua melhor versão como advogado."
+              </p>
+            </div>
           </div>
 
           <Suspense fallback={null}>
@@ -84,6 +111,11 @@ export default function LoginPage() {
             Não tem acesso? Entre em contato com o administrador.
           </p>
         </div>
+
+        {/* Tagline abaixo do card */}
+        <p className="text-center text-xs text-[#c8b8b4] mt-5 tracking-wide">
+          ✦ &nbsp;Magia, estratégia e resultados&nbsp; ✦
+        </p>
       </div>
     </div>
   )
