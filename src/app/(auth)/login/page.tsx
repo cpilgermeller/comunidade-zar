@@ -83,20 +83,17 @@ export default function LoginPage() {
             {/* Ícone estrela de 4 pontas */}
             <div className="relative inline-flex mb-5">
               <div className="w-20 h-20 bg-gradient-to-br from-brand-900 via-brand-800 to-brand-600 rounded-2xl flex items-center justify-center shadow-xl shadow-brand-200/60">
-                <span className="text-4xl leading-none select-none" style={{ filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.4))' }}>✦</span>
+                <span className="text-5xl leading-none select-none text-white">✦</span>
               </div>
-              {/* Brilhinhos ao redor */}
-              <span className="absolute -top-1 -right-1 text-base opacity-70">✨</span>
-              <span className="absolute -bottom-1 -left-1 text-sm opacity-50">✦</span>
             </div>
 
             <h1 className="text-2xl font-black text-gray-900 tracking-tight">Comunidade ZAR</h1>
-            <p className="text-sm text-brand-700/70 font-medium mt-1">Transformação começa aqui.</p>
+            <p className="text-sm text-brand-700/70 font-medium mt-1">Sua transformação está aqui.</p>
 
             {/* Frase motivacional */}
             <div className="mt-4 px-4 py-3 bg-gradient-to-r from-brand-50 to-gold-50 rounded-2xl border border-brand-100/60">
               <p className="text-xs text-gray-500 leading-relaxed italic">
-                "Cada acesso é um passo rumo à sua melhor versão como advogado."
+                "Cada acesso te leva a um passo mais próximo da sua melhor versão."
               </p>
             </div>
           </div>
@@ -114,7 +111,7 @@ export default function LoginPage() {
 
         {/* Tagline abaixo do card */}
         <p className="text-center text-xs text-[#c8b8b4] mt-5 tracking-wide">
-          ✦ &nbsp;Magia, estratégia e resultados&nbsp; ✦
+          ✦ &nbsp;Transformação, estratégia e resultados&nbsp; ✦
         </p>
       </div>
     </div>
