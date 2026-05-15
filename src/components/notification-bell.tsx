@@ -61,22 +61,23 @@ export function NotificationBell({ initialUnread }: { initialUnread: number }) {
   }
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref}>
+      {/* Sino flutuante fixo no canto superior direito */}
       <button
         onClick={() => setOpen((v) => !v)}
-        className="relative p-2 rounded-xl text-gray-500 hover:bg-brand-50 hover:text-brand-800 transition-colors"
+        className="fixed top-4 right-4 z-40 relative w-10 h-10 bg-white rounded-xl shadow-md border border-[#f0eae6] flex items-center justify-center text-gray-500 hover:text-brand-800 hover:shadow-lg transition-all"
         title="Notificações"
       >
         <Bell size={18} />
         {unread > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
             {unread > 9 ? '9+' : unread}
           </span>
         )}
       </button>
 
       {open && (
-        <div className="fixed top-4 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-[#f0eae6] z-50 overflow-hidden">
+        <div className="fixed top-16 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-[#f0eae6] z-50 overflow-hidden">
           <div className="flex items-center justify-between px-4 py-3 border-b border-[#f7f2ef]">
             <span className="text-sm font-bold text-gray-900">Notificações</span>
             {unread > 0 && (

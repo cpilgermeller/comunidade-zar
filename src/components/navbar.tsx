@@ -134,7 +134,6 @@ export async function Navbar() {
                 <p className="text-[10px] text-[#94a3b8] truncate">{session.email}</p>
               </div>
             </Link>
-            <NotificationBell initialUnread={unreadCount} />
             <form action={logout}>
               <button type="submit" title="Sair"
                 className="text-gray-300 hover:text-red-400 p-2 transition-colors">
@@ -142,6 +141,7 @@ export async function Navbar() {
               </button>
             </form>
           </div>
+          <NotificationBell initialUnread={unreadCount} />
         </div>
       )}
     </aside>
