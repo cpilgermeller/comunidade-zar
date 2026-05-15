@@ -19,7 +19,9 @@ export async function Navbar() {
     db.jurisprudence.count(),
     db.fundamento.count(),
     db.usefulLink.findMany({ orderBy: { order: 'asc' } }),
-    session ? db.notification.count({ where: { userId: session.userId, read: false } }) : Promise.resolve(0),
+    session
+      ? db.notification.count({ where: { userId: session.userId, read: false } }).catch(() => 0)
+      : Promise.resolve(0),
   ])
 
   return (
