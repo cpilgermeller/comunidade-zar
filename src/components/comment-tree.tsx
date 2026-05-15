@@ -27,8 +27,9 @@ type Props = {
 export function CommentNode({ comment, threadId, currentUserId, isAdmin, depth = 0 }: Props) {
   const [showReply, setShowReply] = useState(false)
   const [showReplies, setShowReplies] = useState(true)
-  const liked = comment.likes.some((l) => l.userId === currentUserId)
+  const liked = (comment.likes ?? []).some((l) => l.userId === currentUserId)
   const canDelete = comment.author.id === currentUserId || isAdmin
+  const replies = comment.replies ?? []
 
   return (
     <div className={depth > 0 ? 'ml-8 border-l-2 border-gray-100 pl-4' : ''}>
@@ -47,7 +48,7 @@ export function CommentNode({ comment, threadId, currentUserId, isAdmin, depth =
                 className={`flex items-center gap-1 text-xs transition-colors ${liked ? 'text-rose-500' : 'text-gray-400 hover:text-rose-400'}`}
               >
                 <Heart size={13} fill={liked ? 'currentColor' : 'none'} />
-                {comment.likes.length > 0 && comment.likes.length}
+                {(comment.likes ?? []).length > 0 && (comment.likes ?? []).length}
               </button>
             </form>
             {depth < 3 && (
@@ -79,16 +80,16 @@ export function CommentNode({ comment, threadId, currentUserId, isAdmin, depth =
           )}
         </div>
       </div>
-      {comment.replies.length > 0 && (
+      {replies.length > 0 && (
         <>
           <button
             onClick={() => setShowReplies(!showReplies)}
             className="flex items-center gap-1 text-xs text-gray-400 hover:text-violet-600 ml-10 mb-1 transition-colors"
           >
             <ChevronDown size={13} className={showReplies ? 'rotate-180' : ''} />
-            {showReplies ? 'Ocultar' : `Ver ${comment.replies.length} resposta${comment.replies.length > 1 ? 's' : ''}`}
+            {showReplies ? 'Ocultar' : `Ver ${replies.length} resposta${replies.length > 1 ? 's' : ''}`}
           </button>
-          {showReplies && comment.replies.map((reply) => (
+          {showReplies && replies.map((reply) => (
             <CommentNode
               key={reply.id}
               comment={reply}
