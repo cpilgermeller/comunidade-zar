@@ -24,33 +24,38 @@ export async function createComment(formData: FormData) {
   const link = `/discussoes/${threadId}#comment-${comment.id}`
   const actorName = session.name.split(' ')[0]
 
-  // Notifica o autor da discussão (se não for o próprio)
-  if (thread.authorId !== session.userId) {
-    await db.notification.create({
-      data: {
-        userId: thread.authorId,
-        actorId: session.userId,
-        type: 'thread_reply',
-        title: `${actorName} respondeu sua discussão "${thread.title.slice(0, 50)}${thread.title.length > 50 ? '…' : ''}"`,
-        link,
-      },
-    })
-  }
-
-  // Notifica o autor do comentário pai (se for reply e não for o próprio)
-  if (parentId) {
-    const parent = await db.comment.findUnique({ where: { id: parentId } })
-    if (parent && parent.authorId !== session.userId && parent.authorId !== thread.authorId) {
+  try {
+    // Notifica o autor da discussão (se não for o próprio)
+    if (thread.authorId !== session.userId) {
       await db.notification.create({
         data: {
-          userId: parent.authorId,
+          userId: thread.authorId,
           actorId: session.userId,
-          type: 'comment_reply',
-          title: `${actorName} respondeu seu comentário em "${thread.title.slice(0, 50)}${thread.title.length > 50 ? '…' : ''}"`,
+          type: 'thread_reply',
+          title: `${actorName} respondeu sua discussão "${thread.title.slice(0, 50)}${thread.title.length > 50 ? '…' : ''}"`,
           link,
         },
       })
     }
+
+    // Notifica o autor do comentário pai (se for reply e não for o próprio)
+    if (parentId) {
+      const parent = await db.comment.findUnique({ where: { id: parentId } })
+      if (parent && parent.authorId !== session.userId && parent.authorId !== thread.authorId) {
+        await db.notification.create({
+          data: {
+            userId: parent.authorId,
+            actorId: session.userId,
+            type: 'comment_reply',
+            title: `${actorName} respondeu seu comentário em "${thread.title.slice(0, 50)}${thread.title.length > 50 ? '…' : ''}"`,
+            link,
+          },
+        })
+      }
+    }
+  } catch (err) {
+    console.error('Erro ao criar notificação:', err)
+    // Não interrompe o fluxo — comentário já foi salvo
   }
 
   revalidatePath(`/discussoes/${threadId}`)
