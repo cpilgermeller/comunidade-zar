@@ -4,9 +4,11 @@ import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-export { PIECES_OPTIONS, EXPERIENCE_LABELS, DELIVERY_LABELS } from '@/lib/mural-constants'
 
-export async function createOpportunityProfile(formData: FormData) {
+export async function createOpportunityProfile(
+  _prevState: { error: string } | undefined,
+  formData: FormData,
+) {
   const session = await getSession()
   if (!session) throw new Error('Não autorizado')
 
