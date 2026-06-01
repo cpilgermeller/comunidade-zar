@@ -3,7 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/navbar'
-import { createOpportunityProfile, PIECES_OPTIONS } from '@/app/actions/mural'
+import { createOpportunityProfile } from '@/app/actions/mural'
+import { PIECES_OPTIONS } from '@/lib/mural-constants'
 import { ChevronLeft, Briefcase } from 'lucide-react'
 import Link from 'next/link'
 

@@ -4,30 +4,7 @@ import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-
-export const PIECES_OPTIONS = [
-  'Petição Inicial',
-  'Réplica',
-  'Agravo de Instrumento',
-  'Agravo Interno',
-  'Apelação',
-  'Embargos de Declaração',
-  'Contestação',
-  'Outro',
-]
-
-export const EXPERIENCE_LABELS: Record<string, string> = {
-  proven: 'Experiência comprovada',
-  studied: 'Estudei e estou pronto(a)',
-  beginner: 'Iniciando na prática',
-}
-
-export const DELIVERY_LABELS: Record<string, string> = {
-  '24h': '24 horas',
-  '48h': '48 horas',
-  '72h': '72 horas',
-  other: 'A combinar',
-}
+export { PIECES_OPTIONS, EXPERIENCE_LABELS, DELIVERY_LABELS } from '@/lib/mural-constants'
 
 export async function createOpportunityProfile(formData: FormData) {
   const session = await getSession()

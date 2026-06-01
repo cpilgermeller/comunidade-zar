@@ -2,7 +2,7 @@ import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { Navbar } from '@/components/navbar'
 import { InterestButton } from '@/components/interest-modal'
-import { EXPERIENCE_LABELS, DELIVERY_LABELS } from '@/app/actions/mural'
+import { EXPERIENCE_LABELS, DELIVERY_LABELS } from '@/lib/mural-constants'
 import { Briefcase, CheckCircle, Clock, FileText, Info, Plus, ShieldCheck, Sparkles } from 'lucide-react'
 import Link from 'next/link'
 
