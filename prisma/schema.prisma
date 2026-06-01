@@ -40,6 +40,8 @@ model User {
   notifications         Notification[]       @relation("NotificationRecipient")
   notificationsTriggered Notification[]      @relation("NotificationActor")
   passwordResetTokens   PasswordResetToken[]
+  opportunityProfile    OpportunityProfile?
+  opportunityInterests  OpportunityInterest[] @relation("OpportunityInterestFrom")
 }
 
 model Insignia {
@@ -213,6 +215,38 @@ model Notification {
   link      String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
+}
+
+model OpportunityProfile {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  whatsapp           String
+  city               String?
+  state              String?
+  experience         String   // "proven" | "studied" | "beginner"
+  processTypes       String
+  pieces             String   // comma-separated list
+  deliveryTime       String   // "24h" | "48h" | "72h" | "other"
+  acceptsTestPiece   Boolean  @default(false)
+  pricing            String   // admin only — texto livre
+  acceptsNegotiation Boolean  @default(false)
+  status             String   @default("pending") // "pending" | "approved" | "rejected"
+  adminNote          String?
+  interests          OpportunityInterest[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model OpportunityInterest {
+  id           String             @id @default(cuid())
+  profileId    String
+  profile      OpportunityProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  fromUserId   String
+  fromUser     User               @relation("OpportunityInterestFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  fromWhatsapp String
+  message      String?
+  createdAt    DateTime           @default(now())
 }
 
 model PasswordResetToken {

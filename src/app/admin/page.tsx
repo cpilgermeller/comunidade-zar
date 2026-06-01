@@ -10,6 +10,7 @@ import { deleteJurisprudence } from '@/app/actions/jurisprudencias'
 import { deleteFundamento } from '@/app/actions/fundamentos'
 import { assignInsignia, deleteInsignia } from '@/app/actions/profile'
 import { deleteUsefulLink } from '@/app/actions/useful-links'
+import { approveOpportunityProfile, rejectOpportunityProfile, deleteOpportunityProfile, EXPERIENCE_LABELS, DELIVERY_LABELS } from '@/app/actions/mural'
 import { CreateUserForm, CreateCategoryForm, EditUserButton } from '@/components/admin-forms'
 import { CreateAnnouncementForm, CreateEventForm } from '@/components/admin-home-forms'
 import { CreateInsigniaForm } from '@/components/admin-insignia-forms'
@@ -17,13 +18,14 @@ import { CreateUsefulLinkForm } from '@/components/admin-links-form'
 import {
   Shield, Ban, Trash2, CheckCircle, Pin, Megaphone, CalendarDays,
   ExternalLink, Scale, BookOpen, Star, UserPlus, Clock, Link2, Infinity,
+  Briefcase, X,
 } from 'lucide-react'
 
 export default async function AdminPage() {
   const session = await getSession()
   if (!session || session.role !== 'admin') redirect('/')
 
-  const [users, categories, threadCount, commentCount, announcements, events, jurisprudences, fundamentos, insignias, usefulLinks] = await Promise.all([
+  const [users, categories, threadCount, commentCount, announcements, events, jurisprudences, fundamentos, insignias, usefulLinks, opportunityProfiles] = await Promise.all([
     db.user.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
@@ -40,6 +42,10 @@ export default async function AdminPage() {
     db.fundamento.findMany({ orderBy: [{ isOfficial: 'desc' }, { createdAt: 'desc' }], include: { author: { select: { name: true } }, _count: { select: { likes: true } } }, take: 20 }),
     db.insignia.findMany({ orderBy: { name: 'asc' } }),
     db.usefulLink.findMany({ orderBy: { order: 'asc' } }),
+    db.opportunityProfile.findMany({
+      orderBy: [{ status: 'asc' }, { createdAt: 'desc' }],
+      include: { user: { select: { name: true, email: true } }, _count: { select: { interests: true } } },
+    }),
   ])
 
   const members = users.filter((u) => !u.blocked)
@@ -402,6 +408,97 @@ export default async function AdminPage() {
               </table>
             </div>
           </div>
+
+          {/* ── Mural de Oportunidades ── */}
+          <div className="bg-white border border-[#f0eae6] rounded-2xl shadow-sm overflow-hidden mt-8">
+            <div className="px-5 py-4 border-b border-[#f7f2ef] flex items-center justify-between">
+              <h2 className="font-bold text-gray-900 flex items-center gap-2">
+                <Briefcase size={16} className="text-brand-700" /> Mural de Oportunidades
+                {opportunityProfiles.filter(p => p.status === 'pending').length > 0 && (
+                  <span className="ml-1 bg-amber-100 text-amber-700 text-xs font-bold px-2 py-0.5 rounded-full">
+                    {opportunityProfiles.filter(p => p.status === 'pending').length} pendente{opportunityProfiles.filter(p => p.status === 'pending').length > 1 ? 's' : ''}
+                  </span>
+                )}
+              </h2>
+            </div>
+            {opportunityProfiles.length === 0 ? (
+              <p className="px-5 py-8 text-sm text-center text-gray-400">Nenhum cadastro ainda.</p>
+            ) : (
+              <div className="divide-y divide-[#f7f2ef]">
+                {opportunityProfiles.map((profile) => {
+                  const pieces = profile.pieces.split(',').map(p => p.trim()).filter(Boolean)
+                  return (
+                    <div key={profile.id} className="px-5 py-4 space-y-3">
+                      <div className="flex items-start justify-between gap-4 flex-wrap">
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="font-semibold text-gray-900 text-sm">{profile.user.name}</p>
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                              profile.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
+                              profile.status === 'pending' ? 'bg-amber-100 text-amber-700' :
+                              'bg-red-100 text-red-700'
+                            }`}>
+                              {profile.status === 'approved' ? '✓ Aprovado' : profile.status === 'pending' ? '⏳ Pendente' : '✗ Rejeitado'}
+                            </span>
+                            <span className="text-xs text-gray-400">{profile._count.interests} interesse{profile._count.interests !== 1 ? 's' : ''}</span>
+                          </div>
+                          <p className="text-xs text-gray-400 mt-0.5">{profile.user.email} · WhatsApp: {profile.whatsapp}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          {profile.status === 'pending' && (
+                            <form action={approveOpportunityProfile.bind(null, profile.id)}>
+                              <button type="submit" className="flex items-center gap-1 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg transition-colors">
+                                <CheckCircle size={12} /> Aprovar
+                              </button>
+                            </form>
+                          )}
+                          {profile.status === 'approved' && (
+                            <form action={rejectOpportunityProfile.bind(null, profile.id, undefined)}>
+                              <button type="submit" className="flex items-center gap-1 text-xs font-semibold bg-amber-100 hover:bg-amber-200 text-amber-700 px-3 py-1.5 rounded-lg transition-colors">
+                                <X size={12} /> Suspender
+                              </button>
+                            </form>
+                          )}
+                          <form action={deleteOpportunityProfile.bind(null, profile.id)}>
+                            <button type="submit" className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-500 px-2 py-1.5 rounded-lg transition-colors">
+                              <Trash2 size={12} />
+                            </button>
+                          </form>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1 text-xs text-gray-500">
+                        <p><span className="font-medium text-gray-700">Experiência:</span> {EXPERIENCE_LABELS[profile.experience]}</p>
+                        <p><span className="font-medium text-gray-700">Prazo:</span> {DELIVERY_LABELS[profile.deliveryTime]}</p>
+                        <p><span className="font-medium text-gray-700">Peça teste:</span> {profile.acceptsTestPiece ? 'Sim' : 'Não'}</p>
+                        <p><span className="font-medium text-gray-700">Negocia:</span> {profile.acceptsNegotiation ? 'Sim' : 'Não'}</p>
+                      </div>
+
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Peças</p>
+                        <div className="flex flex-wrap gap-1">
+                          {pieces.map(p => <span key={p} className="text-xs bg-brand-50 text-brand-800 border border-brand-100 px-2 py-0.5 rounded-full">{p}</span>)}
+                        </div>
+                      </div>
+
+                      <div className="bg-amber-50 border border-amber-100 rounded-xl px-3 py-2">
+                        <p className="text-[10px] font-bold text-amber-700 uppercase tracking-wide mb-0.5">Valores (confidencial)</p>
+                        <p className="text-xs text-amber-900 leading-relaxed">{profile.pricing}</p>
+                      </div>
+
+                      {profile.processTypes && (
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-0.5">Experiência relatada</p>
+                          <p className="text-xs text-gray-600 leading-relaxed">{profile.processTypes}</p>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+
         </div>
       </main>
     </div>
