@@ -59,6 +59,7 @@ export async function createEvent(
     data: { title, description: description || null, link: link || null, eventDate, authorId: session.userId },
   })
   revalidatePath('/')
+  revalidatePath('/admin')
   return { success: true }
 }
 
@@ -91,4 +92,5 @@ export async function deleteEvent(id: string) {
   await requireAdmin()
   await db.event.delete({ where: { id } })
   revalidatePath('/')
+  revalidatePath('/admin')
 }
