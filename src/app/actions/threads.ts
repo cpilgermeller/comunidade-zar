@@ -29,7 +29,7 @@ export async function createThread(formData: FormData) {
   if (!title || !body || !categoryId) redirect('/')
 
   const thread = await db.thread.create({
-    data: { title, body, categoryId, authorId: session.userId },
+    data: { title, body, categoryId, authorId: session.userId, lastActivityAt: new Date() },
   })
 
   revalidatePath('/')

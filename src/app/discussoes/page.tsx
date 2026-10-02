@@ -36,7 +36,7 @@ export default async function DiscussoesPage({
         ordem === 'popular'
           ? [{ pinned: 'desc' }, { views: 'desc' }, { createdAt: 'desc' }]
           : ordem === 'atividade'
-          ? [{ pinned: 'desc' }, { lastActivityAt: 'desc' }]
+          ? [{ pinned: 'desc' }, { lastActivityAt: { sort: 'desc', nulls: 'last' } }]
           : [{ pinned: 'desc' }, { createdAt: 'desc' }],
       include: {
         author: { select: { name: true } },
