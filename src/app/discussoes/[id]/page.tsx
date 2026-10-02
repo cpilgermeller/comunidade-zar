@@ -10,7 +10,8 @@ import { formatDate } from '@/lib/utils'
 import { toggleThreadLike, deleteThread } from '@/app/actions/threads'
 import { togglePinThread, toggleLockThread } from '@/app/actions/admin'
 import { EditThreadForm } from '@/components/edit-thread-form'
-import { Heart, Eye, MessageSquare, Pin, Lock, Trash2, ChevronLeft, Pencil } from 'lucide-react'
+import { BookmarkButton } from '@/components/bookmark-button'
+import { Heart, Eye, MessageSquare, Pin, Lock, Trash2, ChevronLeft, CheckCircle, Pencil } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function ThreadPage({ params }: { params: Promise<{ id: string }> }) {
@@ -24,6 +25,7 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
       author: { select: { id: true, name: true } },
       category: { select: { name: true, color: true } },
       likes: { select: { userId: true } },
+      bookmarks: { select: { userId: true } },
       _count: { select: { comments: true } },
       comments: {
         where: { parentId: null },
@@ -58,10 +60,13 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
 
   const liked = session ? thread.likes.some((l) => l.userId === session.userId) : false
   const canDelete = session && (thread.author.id === session.userId || isAdmin)
+  const isThreadAuthor = session?.userId === thread.author.id
   const EDIT_WINDOW_MS = 30 * 60 * 1000
-  const canEdit = session && thread.author.id === session.userId &&
-    (Date.now() - thread.createdAt.getTime()) < EDIT_WINDOW_MS
+  const canEdit = isThreadAuthor && (Date.now() - thread.createdAt.getTime()) < EDIT_WINDOW_MS
   const wasEdited = thread.updatedAt.getTime() - thread.createdAt.getTime() > 5000
+  const isBookmarked = session
+    ? thread.bookmarks.some((b: { userId: string }) => b.userId === session.userId)
+    : false
 
   return (
     <div className="flex h-full">
@@ -83,6 +88,11 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
               <span className="text-xs font-medium px-2 py-0.5 rounded-full text-white" style={{ backgroundColor: thread.category.color }}>
                 {thread.category.name}
               </span>
+              {thread.resolved && (
+                <span className="flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  <CheckCircle size={11} /> Resolvida
+                </span>
+              )}
               {thread.locked && (
                 <span className="flex items-center gap-1 text-xs text-amber-600 font-medium">
                   <Lock size={11} /> Encerrado
@@ -118,16 +128,19 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
 
             <div className="flex items-center gap-4 pt-4 border-t border-[#f7f2ef] flex-wrap mt-4">
               {session && (
-                <form action={toggleThreadLike.bind(null, thread.id)}>
-                  <button
-                    type="submit"
-                    className={`flex items-center gap-1.5 text-sm transition-colors ${liked ? 'text-rose-500' : 'text-gray-400 hover:text-rose-400'}`}
-                  >
-                    <Heart size={16} fill={liked ? 'currentColor' : 'none'} />
-                    {thread.likes.length > 0 && <span>{thread.likes.length}</span>}
-                    {liked ? 'Curtido' : 'Curtir'}
-                  </button>
-                </form>
+                <>
+                  <form action={toggleThreadLike.bind(null, thread.id)}>
+                    <button
+                      type="submit"
+                      className={`flex items-center gap-1.5 text-sm transition-colors ${liked ? 'text-rose-500' : 'text-gray-400 hover:text-rose-400'}`}
+                    >
+                      <Heart size={16} fill={liked ? 'currentColor' : 'none'} />
+                      {thread.likes.length > 0 && <span>{thread.likes.length}</span>}
+                      {liked ? 'Curtido' : 'Curtir'}
+                    </button>
+                  </form>
+                  <BookmarkButton threadId={thread.id} initialBookmarked={isBookmarked} />
+                </>
               )}
               <span className="flex items-center gap-1 text-sm text-gray-400">
                 <MessageSquare size={15} /> {thread._count.comments} resposta{thread._count.comments !== 1 ? 's' : ''}
@@ -191,6 +204,8 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                     threadId={thread.id}
                     currentUserId={session?.userId ?? ''}
                     isAdmin={isAdmin}
+                    isThreadAuthor={isThreadAuthor}
+                    bestCommentId={thread.bestCommentId ?? null}
                   />
                 ))}
               </div>

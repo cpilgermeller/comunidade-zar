@@ -25,14 +25,18 @@ export async function createComment(formData: FormData) {
   const actorName = session.name.split(' ')[0]
 
   try {
+    const titleShort = `${thread.title.slice(0, 50)}${thread.title.length > 50 ? '…' : ''}`
+    const alreadyNotified = new Set([session.userId])
+
     // Notifica o autor da discussão (se não for o próprio)
     if (thread.authorId !== session.userId) {
+      alreadyNotified.add(thread.authorId)
       await db.notification.create({
         data: {
           userId: thread.authorId,
           actorId: session.userId,
           type: 'thread_reply',
-          title: `${actorName} respondeu sua discussão "${thread.title.slice(0, 50)}${thread.title.length > 50 ? '…' : ''}"`,
+          title: `${actorName} respondeu sua discussão "${titleShort}"`,
           link,
         },
       })
@@ -41,17 +45,38 @@ export async function createComment(formData: FormData) {
     // Notifica o autor do comentário pai (se for reply e não for o próprio)
     if (parentId) {
       const parent = await db.comment.findUnique({ where: { id: parentId } })
-      if (parent && parent.authorId !== session.userId && parent.authorId !== thread.authorId) {
+      if (parent && !alreadyNotified.has(parent.authorId)) {
+        alreadyNotified.add(parent.authorId)
         await db.notification.create({
           data: {
             userId: parent.authorId,
             actorId: session.userId,
             type: 'comment_reply',
-            title: `${actorName} respondeu seu comentário em "${thread.title.slice(0, 50)}${thread.title.length > 50 ? '…' : ''}"`,
+            title: `${actorName} respondeu seu comentário em "${titleShort}"`,
             link,
           },
         })
       }
+    }
+
+    // Notifica outros participantes que comentaram na thread
+    const otherParticipants = await db.comment.findMany({
+      where: { threadId, authorId: { notIn: [...alreadyNotified] } },
+      select: { authorId: true },
+      distinct: ['authorId'],
+      take: 10,
+      orderBy: { createdAt: 'desc' },
+    })
+    for (const p of otherParticipants) {
+      await db.notification.create({
+        data: {
+          userId: p.authorId,
+          actorId: session.userId,
+          type: 'thread_reply',
+          title: `${actorName} também respondeu em "${titleShort}"`,
+          link,
+        },
+      })
     }
   } catch (err) {
     console.error('Erro ao criar notificação:', err)
@@ -70,6 +95,12 @@ export async function deleteComment(commentId: string, threadId: string) {
 
   if (comment.authorId !== session.userId && session.role !== 'admin') {
     throw new Error('Não autorizado')
+  }
+
+  // Se esse comentário é a melhor resposta, limpa o campo na thread
+  const thread = await db.thread.findUnique({ where: { id: threadId }, select: { bestCommentId: true } })
+  if (thread?.bestCommentId === commentId) {
+    await db.thread.update({ where: { id: threadId }, data: { bestCommentId: null, resolved: false } })
   }
 
   await db.comment.delete({ where: { id: commentId } })

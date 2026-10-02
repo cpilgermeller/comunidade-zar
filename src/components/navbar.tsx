@@ -7,7 +7,7 @@ import { NotificationBell } from './notification-bell'
 import {
   Home, MessageSquare, Users, Heart, Plus, Shield,
   Scale, BookOpen, LogOut, Zap, ExternalLink,
-  ChevronRight, Star, Sparkles, Briefcase,
+  ChevronRight, Star, Sparkles, Briefcase, Bookmark,
 } from 'lucide-react'
 
 export async function Navbar() {
@@ -65,10 +65,16 @@ export async function Navbar() {
                 </Link>
               ))}
               {session && (
-                <Link href="/discussoes/nova"
-                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-brand-700 hover:bg-brand-50 transition-colors font-medium">
-                  <Plus size={12} /> Nova discussão
-                </Link>
+                <>
+                  <Link href="/discussoes/nova"
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-brand-700 hover:bg-brand-50 transition-colors font-medium">
+                    <Plus size={12} /> Nova discussão
+                  </Link>
+                  <Link href="/discussoes/salvos"
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-gray-500 hover:bg-brand-50 hover:text-brand-800 transition-colors">
+                    <Bookmark size={12} /> Salvos
+                  </Link>
+                </>
               )}
             </div>
           )}

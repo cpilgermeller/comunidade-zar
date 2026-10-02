@@ -82,6 +82,40 @@ export async function toggleThreadLike(threadId: string) {
   revalidatePath(`/discussoes/${threadId}`)
 }
 
+export async function markBestAnswer(threadId: string, commentId: string) {
+  const session = await getSession()
+  if (!session) throw new Error('Não autorizado')
+  const thread = await db.thread.findUnique({ where: { id: threadId } })
+  if (!thread || thread.authorId !== session.userId) throw new Error('Não autorizado')
+  await db.thread.update({ where: { id: threadId }, data: { bestCommentId: commentId, resolved: true } })
+  revalidatePath(`/discussoes/${threadId}`)
+}
+
+export async function clearBestAnswer(threadId: string) {
+  const session = await getSession()
+  if (!session) throw new Error('Não autorizado')
+  const thread = await db.thread.findUnique({ where: { id: threadId } })
+  if (!thread || thread.authorId !== session.userId) throw new Error('Não autorizado')
+  await db.thread.update({ where: { id: threadId }, data: { bestCommentId: null, resolved: false } })
+  revalidatePath(`/discussoes/${threadId}`)
+}
+
+export async function toggleBookmark(threadId: string) {
+  const session = await getSession()
+  if (!session) throw new Error('Não autorizado')
+  const existing = await db.threadBookmark.findUnique({
+    where: { userId_threadId: { userId: session.userId, threadId } },
+  })
+  if (existing) {
+    await db.threadBookmark.delete({ where: { id: existing.id } })
+  } else {
+    await db.threadBookmark.create({ data: { userId: session.userId, threadId } })
+  }
+  revalidatePath(`/discussoes/${threadId}`)
+  revalidatePath('/discussoes/salvos')
+  revalidatePath('/discussoes')
+}
+
 export async function incrementViews(threadId: string) {
   await db.thread.update({
     where: { id: threadId },

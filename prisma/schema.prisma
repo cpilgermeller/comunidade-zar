@@ -42,6 +42,7 @@ model User {
   passwordResetTokens   PasswordResetToken[]
   opportunityProfile    OpportunityProfile?
   opportunityInterests  OpportunityInterest[] @relation("OpportunityInterestFrom")
+  threadBookmarks       ThreadBookmark[]
 }
 
 model Insignia {
@@ -76,22 +77,36 @@ model Category {
 }
 
 model Thread {
-  id        String   @id @default(cuid())
-  title     String
-  body      String
-  pinned    Boolean  @default(false)
-  locked    Boolean  @default(false)
-  views     Int      @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  title         String
+  body          String
+  pinned        Boolean  @default(false)
+  locked        Boolean  @default(false)
+  resolved      Boolean  @default(false)
+  bestCommentId String?
+  views         Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   authorId   String
   author     User     @relation(fields: [authorId], references: [id])
   categoryId String
   category   Category @relation(fields: [categoryId], references: [id])
 
-  comments Comment[]
-  likes    Like[]
+  comments  Comment[]
+  likes     Like[]
+  bookmarks ThreadBookmark[]
+}
+
+model ThreadBookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  threadId  String
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, threadId])
 }
 
 model Comment {

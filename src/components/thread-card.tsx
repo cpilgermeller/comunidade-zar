@@ -1,19 +1,20 @@
 import Link from 'next/link'
 import { Avatar } from './avatar'
 import { formatDate } from '@/lib/utils'
-import { MessageSquare, Heart, Eye, Pin, Lock } from 'lucide-react'
+import { MessageSquare, Heart, Eye, Pin, Lock, CheckCircle } from 'lucide-react'
 
 type ThreadCardProps = {
   thread: {
     id: string; title: string; body: string
-    pinned: boolean; locked: boolean; views: number; createdAt: Date
+    pinned: boolean; locked: boolean; resolved: boolean; views: number; createdAt: Date
     author: { name: string }
     category: { name: string; color: string }
     _count: { comments: number; likes: number }
   }
+  isBookmarked?: boolean
 }
 
-export function ThreadCard({ thread }: ThreadCardProps) {
+export function ThreadCard({ thread, isBookmarked }: ThreadCardProps) {
   return (
     <Link href={`/discussoes/${thread.id}`}>
       <div className="group bg-white rounded-2xl border border-[#f0eae6] p-5 card-hover hover:border-brand-200 cursor-pointer">
@@ -28,6 +29,11 @@ export function ThreadCard({ thread }: ThreadCardProps) {
               {thread.pinned && (
                 <span className="flex items-center gap-1 text-[11px] font-medium text-gold-600 bg-gold-50 px-2 py-0.5 rounded-full border border-gold-200">
                   <Pin size={10} className="fill-gold-500" /> Fixado
+                </span>
+              )}
+              {thread.resolved && (
+                <span className="flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                  <CheckCircle size={10} /> Resolvida
                 </span>
               )}
               {thread.locked && (

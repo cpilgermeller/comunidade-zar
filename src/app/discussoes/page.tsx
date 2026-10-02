@@ -15,11 +15,13 @@ export default async function DiscussoesPage({
 
   const categories = await db.category.findMany({ orderBy: { name: 'asc' } })
   const selectedCategory = categories.find((c) => c.slug === categoria)
+  const filterUnanswered = ordem === 'sem_resposta'
 
   const threads = await db.thread.findMany({
     where: {
       ...(selectedCategory ? { categoryId: selectedCategory.id } : {}),
       ...(q ? { OR: [{ title: { contains: q } }, { body: { contains: q } }] } : {}),
+      ...(filterUnanswered ? { comments: { none: {} } } : {}),
     },
     orderBy:
       ordem === 'popular'
@@ -29,6 +31,7 @@ export default async function DiscussoesPage({
       author: { select: { name: true } },
       category: { select: { name: true, color: true } },
       _count: { select: { comments: true, likes: true } },
+      ...(session ? { bookmarks: { where: { userId: session.userId }, select: { id: true } } } : {}),
     },
   })
 
@@ -85,6 +88,12 @@ export default async function DiscussoesPage({
                 icon={<TrendingUp size={13} />}
                 label="Popular"
               />
+              <SortBtn
+                href={`/discussoes?${new URLSearchParams({ ...(q ? { q } : {}), ...(categoria ? { categoria } : {}), ordem: 'sem_resposta' }).toString()}`}
+                active={ordem === 'sem_resposta'}
+                icon={<Sparkles size={13} />}
+                label="Sem resposta"
+              />
             </div>
           </div>
 
@@ -133,7 +142,11 @@ export default async function DiscussoesPage({
           ) : (
             <div className="space-y-3 stagger">
               {threads.map((thread) => (
-                <ThreadCard key={thread.id} thread={thread} />
+                <ThreadCard
+                  key={thread.id}
+                  thread={{ ...thread, resolved: thread.resolved ?? false }}
+                  isBookmarked={'bookmarks' in thread ? (thread.bookmarks as { id: string }[]).length > 0 : false}
+                />
               ))}
             </div>
           )}
