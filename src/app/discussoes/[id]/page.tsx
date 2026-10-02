@@ -9,7 +9,8 @@ import { RichTextDisplay } from '@/components/rich-text-editor'
 import { formatDate } from '@/lib/utils'
 import { toggleThreadLike, deleteThread } from '@/app/actions/threads'
 import { togglePinThread, toggleLockThread } from '@/app/actions/admin'
-import { Heart, Eye, MessageSquare, Pin, Lock, Trash2, ChevronLeft, Shield } from 'lucide-react'
+import { EditThreadForm } from '@/components/edit-thread-form'
+import { Heart, Eye, MessageSquare, Pin, Lock, Trash2, ChevronLeft, Pencil } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function ThreadPage({ params }: { params: Promise<{ id: string }> }) {
@@ -57,6 +58,10 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
 
   const liked = session ? thread.likes.some((l) => l.userId === session.userId) : false
   const canDelete = session && (thread.author.id === session.userId || isAdmin)
+  const EDIT_WINDOW_MS = 30 * 60 * 1000
+  const canEdit = session && thread.author.id === session.userId &&
+    (Date.now() - thread.createdAt.getTime()) < EDIT_WINDOW_MS
+  const wasEdited = thread.updatedAt.getTime() - thread.createdAt.getTime() > 5000
 
   return (
     <div className="flex h-full">
@@ -91,7 +96,10 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
               <Avatar name={thread.author.name} />
               <div>
                 <p className="text-sm font-medium text-gray-800">{thread.author.name}</p>
-                <p className="text-xs text-gray-400">{formatDate(thread.createdAt)}</p>
+                <p className="text-xs text-gray-400">
+                  {formatDate(thread.createdAt)}
+                  {wasEdited && <span className="ml-2 text-gray-300">(editado)</span>}
+                </p>
               </div>
             </div>
 
@@ -99,7 +107,16 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
               <RichTextDisplay html={thread.body} />
             </div>
 
-            <div className="flex items-center gap-4 pt-4 border-t border-[#f7f2ef] flex-wrap">
+            {canEdit && (
+              <EditThreadForm
+                threadId={thread.id}
+                title={thread.title}
+                body={thread.body}
+                createdAt={thread.createdAt.toISOString()}
+              />
+            )}
+
+            <div className="flex items-center gap-4 pt-4 border-t border-[#f7f2ef] flex-wrap mt-4">
               {session && (
                 <form action={toggleThreadLike.bind(null, thread.id)}>
                   <button

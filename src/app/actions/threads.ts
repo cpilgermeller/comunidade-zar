@@ -23,6 +23,32 @@ export async function createThread(formData: FormData) {
   redirect(`/discussoes/${thread.id}`)
 }
 
+const EDIT_WINDOW_MS = 30 * 60 * 1000
+
+export async function updateThread(
+  _prev: { error?: string } | undefined,
+  formData: FormData
+): Promise<{ error?: string } | undefined> {
+  const session = await getSession()
+  if (!session) throw new Error('Não autorizado')
+
+  const threadId = formData.get('threadId') as string
+  const title = (formData.get('title') as string).trim()
+  const body = (formData.get('body') as string).trim()
+
+  if (!title || !body) return { error: 'Título e conteúdo são obrigatórios.' }
+
+  const thread = await db.thread.findUnique({ where: { id: threadId } })
+  if (!thread) return { error: 'Discussão não encontrada.' }
+  if (thread.authorId !== session.userId) return { error: 'Não autorizado.' }
+  if (Date.now() - thread.createdAt.getTime() > EDIT_WINDOW_MS) {
+    return { error: 'O prazo de edição de 30 minutos já encerrou.' }
+  }
+
+  await db.thread.update({ where: { id: threadId }, data: { title, body } })
+  revalidatePath(`/discussoes/${threadId}`)
+}
+
 export async function deleteThread(threadId: string) {
   const session = await getSession()
   if (!session) throw new Error('Não autorizado')
