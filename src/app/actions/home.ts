@@ -83,6 +83,7 @@ export async function updateEvent(
     data: { title, description: description || null, link: link || null, eventDate },
   })
   revalidatePath('/')
+  revalidatePath('/admin')
   return { success: true }
 }
 

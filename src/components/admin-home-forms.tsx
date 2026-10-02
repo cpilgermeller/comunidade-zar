@@ -50,9 +50,7 @@ type EventData = {
 }
 
 function toDatetimeLocal(date: Date | string) {
-  const d = new Date(date)
-  const offset = d.getTimezoneOffset() * 60000
-  return new Date(d.getTime() - offset).toISOString().slice(0, 16)
+  return new Date(date).toISOString().slice(0, 16)
 }
 
 export function EditEventInline({
