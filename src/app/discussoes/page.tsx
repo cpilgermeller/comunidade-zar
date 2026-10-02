@@ -2,8 +2,12 @@ import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { ThreadCard } from '@/components/thread-card'
 import { Navbar } from '@/components/navbar'
+import { LastSeenUpdater } from '@/components/last-seen-updater'
 import Link from 'next/link'
-import { Search, TrendingUp, Clock, Plus, Sparkles } from 'lucide-react'
+import { Search, TrendingUp, Clock, Plus, Sparkles, Star, Bell } from 'lucide-react'
+import { cookies } from 'next/headers'
+
+export const dynamic = 'force-dynamic'
 
 export default async function DiscussoesPage({
   searchParams,
@@ -13,33 +17,86 @@ export default async function DiscussoesPage({
   const { q, categoria, ordem } = await searchParams
   const session = await getSession()
 
+  const cookieStore = await cookies()
+  const lastSeenRaw = cookieStore.get('disc_last')?.value
+  const lastSeen = lastSeenRaw ? new Date(lastSeenRaw) : null
+
   const categories = await db.category.findMany({ orderBy: { name: 'asc' } })
   const selectedCategory = categories.find((c) => c.slug === categoria)
   const filterUnanswered = ordem === 'sem_resposta'
 
-  const threads = await db.thread.findMany({
-    where: {
-      ...(selectedCategory ? { categoryId: selectedCategory.id } : {}),
-      ...(q ? { OR: [{ title: { contains: q } }, { body: { contains: q } }] } : {}),
-      ...(filterUnanswered ? { comments: { none: {} } } : {}),
-    },
-    orderBy:
-      ordem === 'popular'
-        ? [{ pinned: 'desc' }, { views: 'desc' }, { createdAt: 'desc' }]
-        : [{ pinned: 'desc' }, { createdAt: 'desc' }],
-    include: {
-      author: { select: { name: true } },
-      category: { select: { name: true, color: true } },
-      _count: { select: { comments: true, likes: true } },
-      ...(session ? { bookmarks: { where: { userId: session.userId }, select: { id: true } } } : {}),
-    },
-  })
+  const [threads, featuredThreads, newCount] = await Promise.all([
+    db.thread.findMany({
+      where: {
+        ...(selectedCategory ? { categoryId: selectedCategory.id } : {}),
+        ...(q ? { OR: [{ title: { contains: q } }, { body: { contains: q } }] } : {}),
+        ...(filterUnanswered ? { comments: { none: {} } } : {}),
+      },
+      orderBy:
+        ordem === 'popular'
+          ? [{ pinned: 'desc' }, { views: 'desc' }, { createdAt: 'desc' }]
+          : [{ pinned: 'desc' }, { createdAt: 'desc' }],
+      include: {
+        author: { select: { name: true } },
+        category: { select: { name: true, color: true } },
+        _count: { select: { comments: true, likes: true } },
+        ...(session ? { bookmarks: { where: { userId: session.userId }, select: { id: true } } } : {}),
+      },
+    }),
+    !q && !categoria
+      ? db.thread.findMany({
+          where: { featured: true },
+          orderBy: { createdAt: 'desc' },
+          take: 3,
+          include: {
+            author: { select: { name: true } },
+            category: { select: { name: true, color: true } },
+            _count: { select: { comments: true, likes: true } },
+            ...(session ? { bookmarks: { where: { userId: session.userId }, select: { id: true } } } : {}),
+          },
+        })
+      : Promise.resolve([]),
+    session && lastSeen
+      ? db.thread.count({ where: { createdAt: { gt: lastSeen } } })
+      : Promise.resolve(0),
+  ])
 
   return (
     <div className="flex h-full">
       <Navbar />
       <main className="flex-1 overflow-y-auto">
+        {session && <LastSeenUpdater />}
         <div className="max-w-3xl mx-auto px-6 py-8 animate-fade-in">
+
+          {/* Novidades banner */}
+          {session && newCount > 0 && (
+            <div className="flex items-center gap-3 bg-brand-50 border border-brand-200 rounded-xl px-4 py-3 mb-6 text-sm">
+              <Bell size={16} className="text-brand-700 shrink-0" />
+              <p className="text-brand-800 font-medium flex-1">
+                <strong>{newCount} nova{newCount !== 1 ? 's discussões' : ' discussão'}</strong> desde sua última visita
+              </p>
+            </div>
+          )}
+
+          {/* Destaques da semana */}
+          {featuredThreads.length > 0 && (
+            <div className="mb-8">
+              <div className="flex items-center gap-2 mb-3">
+                <Star size={15} className="text-amber-500 fill-amber-400" />
+                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Destaques da semana</h2>
+              </div>
+              <div className="space-y-2">
+                {featuredThreads.map((thread) => (
+                  <ThreadCard
+                    key={thread.id}
+                    thread={{ ...thread, resolved: thread.resolved ?? false, featured: true }}
+                    isBookmarked={'bookmarks' in thread ? (thread.bookmarks as { id: string }[]).length > 0 : false}
+                  />
+                ))}
+              </div>
+              <div className="border-b border-[#f0eae6] mt-6 mb-2" />
+            </div>
+          )}
 
           {/* Header */}
           <div className="flex items-center justify-between mb-6">

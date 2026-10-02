@@ -82,8 +82,8 @@ export function CommentNode({
                 <Reply size={13} /> Responder
               </button>
             )}
-            {/* Controles de melhor resposta — só para o autor da thread */}
-            {isThreadAuthor && currentUserId && (
+            {/* Controles de melhor resposta — autor da thread ou admin */}
+            {(isThreadAuthor || isAdmin) && currentUserId && (
               isBestAnswer ? (
                 <form action={clearBestAnswer.bind(null, threadId)}>
                   <button

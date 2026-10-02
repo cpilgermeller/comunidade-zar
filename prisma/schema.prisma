@@ -84,6 +84,7 @@ model Thread {
   locked        Boolean  @default(false)
   resolved      Boolean  @default(false)
   bestCommentId String?
+  featured      Boolean  @default(false)
   views         Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt

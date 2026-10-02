@@ -8,10 +8,10 @@ import { CommentForm } from '@/components/comment-form'
 import { RichTextDisplay } from '@/components/rich-text-editor'
 import { formatDate } from '@/lib/utils'
 import { toggleThreadLike, deleteThread } from '@/app/actions/threads'
-import { togglePinThread, toggleLockThread } from '@/app/actions/admin'
+import { togglePinThread, toggleLockThread, toggleFeaturedThread } from '@/app/actions/admin'
 import { EditThreadForm } from '@/components/edit-thread-form'
 import { BookmarkButton } from '@/components/bookmark-button'
-import { Heart, Eye, MessageSquare, Pin, Lock, Trash2, ChevronLeft, CheckCircle, Pencil } from 'lucide-react'
+import { Heart, Eye, MessageSquare, Pin, Lock, Trash2, ChevronLeft, CheckCircle, Pencil, Star } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function ThreadPage({ params }: { params: Promise<{ id: string }> }) {
@@ -160,6 +160,11 @@ export default async function ThreadPage({ params }: { params: Promise<{ id: str
                   <form action={toggleLockThread.bind(null, thread.id)}>
                     <button type="submit" className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border transition-colors ${thread.locked ? 'text-amber-600 border-amber-200 bg-amber-50' : 'text-gray-400 border-gray-200 hover:border-amber-200'}`}>
                       <Lock size={12} /> {thread.locked ? 'Abrir' : 'Encerrar'}
+                    </button>
+                  </form>
+                  <form action={toggleFeaturedThread.bind(null, thread.id)}>
+                    <button type="submit" className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg border transition-colors ${thread.featured ? 'text-amber-600 border-amber-200 bg-amber-50' : 'text-gray-400 border-gray-200 hover:border-amber-200'}`}>
+                      <Star size={12} className={thread.featured ? 'fill-amber-500' : ''} /> {thread.featured ? 'Remover destaque' : 'Destacar'}
                     </button>
                   </form>
                 </div>

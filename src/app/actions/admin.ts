@@ -125,6 +125,21 @@ export async function toggleLockThread(threadId: string) {
   revalidatePath(`/discussoes/${threadId}`)
 }
 
+export async function toggleFeaturedThread(threadId: string) {
+  await requireAdmin()
+
+  const thread = await db.thread.findUnique({ where: { id: threadId } })
+  if (!thread) return
+
+  await db.thread.update({
+    where: { id: threadId },
+    data: { featured: !thread.featured },
+  })
+
+  revalidatePath('/discussoes')
+  revalidatePath(`/discussoes/${threadId}`)
+}
+
 export async function createCategory(
   _prev: { error?: string; success?: boolean } | undefined,
   formData: FormData
