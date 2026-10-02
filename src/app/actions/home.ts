@@ -62,6 +62,30 @@ export async function createEvent(
   return { success: true }
 }
 
+export async function updateEvent(
+  _prev: { error?: string; success?: boolean } | undefined,
+  formData: FormData
+): Promise<{ error?: string; success?: boolean }> {
+  await requireAdmin()
+  const id = formData.get('id') as string
+  const title = (formData.get('title') as string).trim()
+  const description = (formData.get('description') as string).trim()
+  const link = (formData.get('link') as string).trim()
+  const dateStr = formData.get('eventDate') as string
+
+  if (!id || !title || !dateStr) return { error: 'Título e data são obrigatórios.' }
+
+  const eventDate = new Date(dateStr)
+  if (isNaN(eventDate.getTime())) return { error: 'Data inválida.' }
+
+  await db.event.update({
+    where: { id },
+    data: { title, description: description || null, link: link || null, eventDate },
+  })
+  revalidatePath('/')
+  return { success: true }
+}
+
 export async function deleteEvent(id: string) {
   await requireAdmin()
   await db.event.delete({ where: { id } })

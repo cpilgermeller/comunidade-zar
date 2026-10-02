@@ -13,7 +13,7 @@ import { deleteUsefulLink } from '@/app/actions/useful-links'
 import { approveOpportunityProfile, rejectOpportunityProfile, deleteOpportunityProfile } from '@/app/actions/mural'
 import { EXPERIENCE_LABELS, DELIVERY_LABELS } from '@/lib/mural-constants'
 import { CreateUserForm, CreateCategoryForm, EditUserButton } from '@/components/admin-forms'
-import { CreateAnnouncementForm, CreateEventForm } from '@/components/admin-home-forms'
+import { CreateAnnouncementForm, CreateEventForm, EditEventInline } from '@/components/admin-home-forms'
 import { CreateInsigniaForm } from '@/components/admin-insignia-forms'
 import { CreateUsefulLinkForm } from '@/components/admin-links-form'
 import {
@@ -226,15 +226,8 @@ export default async function AdminPage() {
             ) : (
               <div className="divide-y divide-[#f7f2ef]">
                 {events.map((ev) => (
-                  <div key={ev.id} className="flex items-center gap-3 py-3">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-800 truncate">{ev.title}</p>
-                      <p className="text-xs text-gray-400">{new Date(ev.eventDate).toLocaleString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</p>
-                    </div>
-                    {ev.link && <a href={ev.link} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-800"><ExternalLink size={14} /></a>}
-                    <form action={deleteEvent.bind(null, ev.id)}>
-                      <button type="submit" className="text-xs px-2 py-1 rounded border border-red-200 text-red-400 hover:bg-red-50 transition-colors"><Trash2 size={12} /></button>
-                    </form>
+                  <div key={ev.id} className="py-3">
+                    <EditEventInline event={ev} deleteAction={deleteEvent.bind(null, ev.id)} />
                   </div>
                 ))}
               </div>
