@@ -1,16 +1,32 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { RichTextEditor } from './rich-text-editor'
 import { createThread } from '@/app/actions/threads'
 import Link from 'next/link'
 
-type Category = { id: string; name: string; color: string }
+type Category = { id: string; name: string; color: string; template?: string | null }
 
 export function NewThreadForm({ categories }: { categories: Category[] }) {
   const [html, setHtml] = useState('')
   const [pending, setPending] = useState(false)
+  const [editorKey, setEditorKey] = useState(0)
+  const [editorContent, setEditorContent] = useState('')
   const formRef = useRef<HTMLFormElement>(null)
+
+  const handleCategoryChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    const cat = categories.find((c) => c.id === e.target.value)
+    const template = cat?.template?.trim()
+    if (template && (!html || html === '<p></p>')) {
+      // Convert plain text template to HTML paragraphs
+      const asHtml = template
+        .split('\n')
+        .map((line) => `<p>${line || '<br>'}</p>`)
+        .join('')
+      setEditorContent(asHtml)
+      setEditorKey((k) => k + 1)
+    }
+  }, [html, categories])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -31,7 +47,7 @@ export function NewThreadForm({ categories }: { categories: Category[] }) {
         {categories.length === 0 ? (
           <p className="text-sm text-amber-600">Nenhuma categoria disponível.</p>
         ) : (
-          <select name="categoryId" required className={inputClass}>
+          <select name="categoryId" required className={inputClass} onChange={handleCategoryChange}>
             <option value="">Selecione uma categoria...</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -49,7 +65,12 @@ export function NewThreadForm({ categories }: { categories: Category[] }) {
 
       <div>
         <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Conteúdo</label>
-        <RichTextEditor onChange={setHtml} placeholder="Detalhe sua dúvida, adicione imagens, formatação..." />
+        <RichTextEditor
+          key={editorKey}
+          content={editorContent}
+          onChange={setHtml}
+          placeholder="Detalhe sua dúvida, adicione imagens, formatação..."
+        />
       </div>
 
       <div className="flex justify-end gap-3 pt-2">

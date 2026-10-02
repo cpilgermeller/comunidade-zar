@@ -14,7 +14,7 @@ import { assignInsignia, deleteInsignia } from '@/app/actions/profile'
 import { deleteUsefulLink } from '@/app/actions/useful-links'
 import { approveOpportunityProfile, rejectOpportunityProfile, deleteOpportunityProfile } from '@/app/actions/mural'
 import { EXPERIENCE_LABELS, DELIVERY_LABELS } from '@/lib/mural-constants'
-import { CreateUserForm, CreateCategoryForm, EditUserButton } from '@/components/admin-forms'
+import { CreateUserForm, CreateCategoryForm, EditUserButton, EditCategoryTemplateButton } from '@/components/admin-forms'
 import { CreateAnnouncementForm, CreateEventForm, EditEventInline } from '@/components/admin-home-forms'
 import { CreateInsigniaForm } from '@/components/admin-insignia-forms'
 import { CreateUsefulLinkForm } from '@/components/admin-links-form'
@@ -295,6 +295,7 @@ export default async function AdminPage() {
                       {cat.description && <p className="text-xs text-gray-400">{cat.description}</p>}
                     </div>
                     <span className="text-xs text-gray-400">{cat._count.threads} discussão{cat._count.threads !== 1 ? 'ões' : ''}</span>
+                    <EditCategoryTemplateButton category={cat} />
                   </div>
                 ))}
               </div>

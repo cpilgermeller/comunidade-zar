@@ -149,12 +149,27 @@ export async function createCategory(
   const name = (formData.get('name') as string).trim()
   const description = (formData.get('description') as string).trim()
   const color = (formData.get('color') as string) || '#6366f1'
+  const template = (formData.get('template') as string).trim() || null
   const slug = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
 
   if (!name) return { error: 'Nome obrigatório.' }
 
-  await db.category.create({ data: { name, slug, description, color } })
+  await db.category.create({ data: { name, slug, description, color, template } })
   revalidatePath('/')
   revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function updateCategoryTemplate(
+  _prev: { error?: string; success?: boolean } | undefined,
+  formData: FormData
+): Promise<{ error?: string; success?: boolean }> {
+  await requireAdmin()
+  const id = formData.get('categoryId') as string
+  const template = (formData.get('template') as string).trim() || null
+  if (!id) return { error: 'Categoria inválida.' }
+  await db.category.update({ where: { id }, data: { template } })
+  revalidatePath('/admin')
+  revalidatePath('/discussoes/nova')
   return { success: true }
 }

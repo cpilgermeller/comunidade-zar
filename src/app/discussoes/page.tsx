@@ -4,7 +4,7 @@ import { ThreadCard } from '@/components/thread-card'
 import { Navbar } from '@/components/navbar'
 import { LastSeenUpdater } from '@/components/last-seen-updater'
 import Link from 'next/link'
-import { Search, TrendingUp, Clock, Plus, Sparkles, Star, Bell } from 'lucide-react'
+import { Search, TrendingUp, Clock, Plus, Sparkles, Star, Bell, Activity } from 'lucide-react'
 import { cookies } from 'next/headers'
 
 export const dynamic = 'force-dynamic'
@@ -35,6 +35,8 @@ export default async function DiscussoesPage({
       orderBy:
         ordem === 'popular'
           ? [{ pinned: 'desc' }, { views: 'desc' }, { createdAt: 'desc' }]
+          : ordem === 'atividade'
+          ? [{ pinned: 'desc' }, { lastActivityAt: 'desc' }]
           : [{ pinned: 'desc' }, { createdAt: 'desc' }],
       include: {
         author: { select: { name: true } },
@@ -144,6 +146,12 @@ export default async function DiscussoesPage({
                 active={ordem === 'popular'}
                 icon={<TrendingUp size={13} />}
                 label="Popular"
+              />
+              <SortBtn
+                href={`/discussoes?${new URLSearchParams({ ...(q ? { q } : {}), ...(categoria ? { categoria } : {}), ordem: 'atividade' }).toString()}`}
+                active={ordem === 'atividade'}
+                icon={<Activity size={13} />}
+                label="Atividade"
               />
               <SortBtn
                 href={`/discussoes?${new URLSearchParams({ ...(q ? { q } : {}), ...(categoria ? { categoria } : {}), ordem: 'sem_resposta' }).toString()}`}

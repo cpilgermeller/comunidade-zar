@@ -21,6 +21,8 @@ export async function createComment(formData: FormData) {
     data: { body, threadId, authorId: session.userId, parentId },
   })
 
+  db.thread.update({ where: { id: threadId }, data: { lastActivityAt: new Date() } }).catch(() => {})
+
   const link = `/discussoes/${threadId}#comment-${comment.id}`
   const actorName = session.name.split(' ')[0]
 

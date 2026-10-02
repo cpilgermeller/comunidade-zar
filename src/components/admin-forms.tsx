@@ -1,8 +1,8 @@
 'use client'
 
 import { useActionState, useState } from 'react'
-import { createUser, createCategory, updateUser } from '@/app/actions/admin'
-import { UserPlus, FolderPlus, Pencil, X, Infinity as InfinityIcon } from 'lucide-react'
+import { createUser, createCategory, updateUser, updateCategoryTemplate } from '@/app/actions/admin'
+import { UserPlus, FolderPlus, Pencil, X, Infinity as InfinityIcon, FileText } from 'lucide-react'
 
 const inputCls = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300'
 
@@ -66,6 +66,10 @@ export function CreateCategoryForm() {
           <label className="text-sm text-gray-600">Cor:</label>
           <input type="color" name="color" defaultValue="#102882" className="h-9 w-20 rounded border border-gray-200 cursor-pointer" />
         </div>
+        <div>
+          <label className="block text-xs text-gray-500 mb-1">Template (texto inicial ao criar discussão nessa categoria)</label>
+          <textarea name="template" rows={3} placeholder="Ex: **Tribunal:** &#10;**Ementa:** &#10;**Dúvida:**" className={`${inputCls} resize-none`} />
+        </div>
         {state?.error && <p className="text-xs text-red-500">{state.error}</p>}
         {state?.success && <p className="text-xs text-emerald-600">Categoria criada!</p>}
         <button type="submit" disabled={pending} className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:opacity-60 text-white text-sm font-medium py-2 rounded-lg transition-colors">
@@ -73,6 +77,58 @@ export function CreateCategoryForm() {
         </button>
       </form>
     </div>
+  )
+}
+
+export function EditCategoryTemplateButton({ category }: {
+  category: { id: string; name: string; template: string | null }
+}) {
+  const [open, setOpen] = useState(false)
+  const [state, action, pending] = useActionState(updateCategoryTemplate, undefined)
+
+  if (state?.success && open) setOpen(false)
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-1 text-xs text-gray-400 hover:text-brand-700 transition-colors px-2 py-1 rounded-lg hover:bg-brand-50"
+        title="Editar template"
+      >
+        <FileText size={12} /> Template
+      </button>
+
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" onClick={() => setOpen(false)}>
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-bold text-gray-900 flex items-center gap-2">
+                <FileText size={15} className="text-brand-700" /> Template — {category.name}
+              </h2>
+              <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
+            </div>
+            <p className="text-xs text-gray-400 mb-3">Texto simples (não HTML). Aparece pré-preenchido no editor ao criar uma discussão nessa categoria.</p>
+            <form action={action} className="space-y-3">
+              <input type="hidden" name="categoryId" value={category.id} />
+              <textarea
+                name="template"
+                rows={6}
+                defaultValue={category.template ?? ''}
+                placeholder="Ex: **Contexto:** &#10;&#10;**Dúvida:** &#10;&#10;**O que já tentei:**"
+                className={`${inputCls} resize-none`}
+              />
+              {state?.error && <p className="text-xs text-red-500">{state.error}</p>}
+              <div className="flex justify-end gap-2">
+                <button type="button" onClick={() => setOpen(false)} className="px-4 py-2 text-sm text-gray-500 hover:text-gray-700">Cancelar</button>
+                <button type="submit" disabled={pending} className="bg-brand-800 hover:bg-brand-900 disabled:opacity-60 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors">
+                  {pending ? 'Salvando...' : 'Salvar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 

@@ -18,6 +18,10 @@ const statements = [
     FOREIGN KEY ("threadId") REFERENCES "Thread"("id") ON DELETE CASCADE,
     CONSTRAINT "ThreadBookmark_userId_threadId_key" UNIQUE ("userId", "threadId")
   )`,
+  `ALTER TABLE "Thread" ADD COLUMN "featured" INTEGER NOT NULL DEFAULT 0`,
+  `ALTER TABLE "Thread" ADD COLUMN "lastActivityAt" DATETIME`,
+  `UPDATE "Thread" SET "lastActivityAt" = "createdAt" WHERE "lastActivityAt" IS NULL`,
+  `ALTER TABLE "Category" ADD COLUMN "template" TEXT`,
 ]
 
 for (const sql of statements) {
