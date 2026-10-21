@@ -16,12 +16,13 @@ const WEEKDAY_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
 export default async function HomePage() {
   const session = await getSession()
   const now = new Date()
+  const startOfToday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
   const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
 
   const [announcements, events, trendingThreads, rankingUsers] = await Promise.all([
     db.announcement.findMany({ orderBy: [{ pinned: 'desc' }, { createdAt: 'desc' }], take: 5, include: { author: { select: { name: true } } } }),
-    db.event.findMany({ where: { eventDate: { gte: now } }, orderBy: { eventDate: 'asc' }, take: 6 }),
+    db.event.findMany({ where: { eventDate: { gte: startOfToday } }, orderBy: { eventDate: 'asc' }, take: 6 }),
     db.thread.findMany({
       where: { createdAt: { gte: sevenDaysAgo } }, orderBy: [{ views: 'desc' }], take: 5,
       include: { author: { select: { name: true } }, category: { select: { name: true, color: true } }, _count: { select: { comments: true, likes: true } } },
