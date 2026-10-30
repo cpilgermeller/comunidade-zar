@@ -2,7 +2,8 @@
 
 import { useActionState, useState } from 'react'
 import { createUser, createCategory, updateUser, updateCategoryTemplate } from '@/app/actions/admin'
-import { UserPlus, FolderPlus, Pencil, X, Infinity as InfinityIcon, FileText } from 'lucide-react'
+import { createBonusMaterial } from '@/app/actions/materials'
+import { UserPlus, FolderPlus, Pencil, X, Infinity as InfinityIcon, FileText, Gift } from 'lucide-react'
 
 const inputCls = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300'
 
@@ -210,6 +211,49 @@ function EditUserModal({ user, onClose }: { user: EditableUser; onClose: () => v
           </button>
         </form>
       </div>
+    </div>
+  )
+}
+
+export function CreateBonusMaterialForm() {
+  const [pending, setPending] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setPending(true)
+    const form = e.currentTarget
+    await createBonusMaterial(new FormData(form))
+    form.reset()
+    setPending(false)
+  }
+
+  return (
+    <div className="bg-white border border-gray-100 rounded-xl p-5">
+      <h2 className="font-semibold text-gray-900 flex items-center gap-2 mb-4">
+        <Gift size={15} className="text-amber-600" /> Adicionar Material Bônus
+      </h2>
+      <form onSubmit={handleSubmit} className="space-y-3">
+        <input name="title" required placeholder="Título do material" className={inputCls} />
+        <textarea name="description" required placeholder="Descrição curta" rows={2} className={`${inputCls} resize-none`} />
+        <input name="fileUrl" required placeholder="URL do arquivo (Google Drive, Dropbox, etc.)" className={inputCls} />
+        <div className="grid grid-cols-2 gap-2">
+          <select name="fileType" className={inputCls}>
+            {['PDF', 'DOCX', 'XLSX', 'PPTX', 'VIDEO', 'LINK'].map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+          <select name="category" className={inputCls}>
+            {['Geral', 'Estratégias', 'Prospecção', 'Atendimento', 'Contratos', 'Marketing', 'Petições', 'Gestão'].map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+        </div>
+        <input name="thumbnailUrl" placeholder="URL da miniatura (opcional)" className={inputCls} />
+        <button type="submit" disabled={pending}
+          className="w-full bg-amber-600 hover:bg-amber-700 disabled:opacity-60 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
+          {pending ? 'Salvando...' : 'Adicionar material'}
+        </button>
+      </form>
     </div>
   )
 }

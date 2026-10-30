@@ -43,6 +43,7 @@ model User {
   opportunityProfile    OpportunityProfile?
   opportunityInterests  OpportunityInterest[] @relation("OpportunityInterestFrom")
   threadBookmarks       ThreadBookmark[]
+  bonusMaterials        BonusMaterial[]
 }
 
 model Insignia {
@@ -275,4 +276,20 @@ model PasswordResetToken {
   expiresAt DateTime
   usedAt    DateTime?
   createdAt DateTime  @default(now())
+}
+
+model BonusMaterial {
+  id           String   @id @default(cuid())
+  title        String
+  description  String
+  fileUrl      String
+  fileType     String   @default("PDF")
+  category     String   @default("Geral")
+  thumbnailUrl String?
+  downloads    Int      @default(0)
+  published    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  authorId     String
+  author       User     @relation(fields: [authorId], references: [id])
 }

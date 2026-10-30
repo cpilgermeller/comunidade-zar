@@ -12,23 +12,24 @@ import { deleteJurisprudence } from '@/app/actions/jurisprudencias'
 import { deleteFundamento } from '@/app/actions/fundamentos'
 import { assignInsignia, deleteInsignia } from '@/app/actions/profile'
 import { deleteUsefulLink } from '@/app/actions/useful-links'
+import { deleteBonusMaterial } from '@/app/actions/materials'
 import { approveOpportunityProfile, rejectOpportunityProfile, deleteOpportunityProfile } from '@/app/actions/mural'
 import { EXPERIENCE_LABELS, DELIVERY_LABELS } from '@/lib/mural-constants'
-import { CreateUserForm, CreateCategoryForm, EditUserButton, EditCategoryTemplateButton } from '@/components/admin-forms'
+import { CreateUserForm, CreateCategoryForm, EditUserButton, EditCategoryTemplateButton, CreateBonusMaterialForm } from '@/components/admin-forms'
 import { CreateAnnouncementForm, CreateEventForm, EditEventInline } from '@/components/admin-home-forms'
 import { CreateInsigniaForm } from '@/components/admin-insignia-forms'
 import { CreateUsefulLinkForm } from '@/components/admin-links-form'
 import {
   Shield, Ban, Trash2, CheckCircle, Pin, Megaphone, CalendarDays,
   ExternalLink, Scale, BookOpen, Star, UserPlus, Clock, Link2, Infinity,
-  Briefcase, X,
+  Briefcase, X, Gift,
 } from 'lucide-react'
 
 export default async function AdminPage() {
   const session = await getSession()
   if (!session || session.role !== 'admin') redirect('/')
 
-  const [users, categories, threadCount, commentCount, announcements, events, jurisprudences, fundamentos, insignias, usefulLinks, opportunityProfiles] = await Promise.all([
+  const [users, categories, threadCount, commentCount, announcements, events, jurisprudences, fundamentos, insignias, usefulLinks, opportunityProfiles, bonusMaterials] = await Promise.all([
     db.user.findMany({
       orderBy: { createdAt: 'desc' },
       include: {
@@ -49,6 +50,7 @@ export default async function AdminPage() {
       orderBy: [{ status: 'asc' }, { createdAt: 'desc' }],
       include: { user: { select: { name: true, email: true } }, _count: { select: { interests: true } } },
     }),
+    db.bonusMaterial.findMany({ orderBy: { createdAt: 'desc' } }),
   ])
 
   const members = users.filter((u) => !u.blocked)
@@ -403,6 +405,40 @@ export default async function AdminPage() {
                   })}
                 </tbody>
               </table>
+            </div>
+          </div>
+
+          {/* ── Materiais Bônus ── */}
+          <div className="mt-8">
+            <div className="grid grid-cols-2 gap-6 mb-4">
+              <CreateBonusMaterialForm />
+              <div className="bg-white border border-gray-100 rounded-xl p-5">
+                <h2 className="font-semibold text-gray-900 flex items-center gap-2 mb-4">
+                  <Gift size={15} className="text-amber-600" /> Materiais Bônus ({bonusMaterials.length})
+                </h2>
+                {bonusMaterials.length === 0 ? (
+                  <p className="text-sm text-gray-400">Nenhum material cadastrado.</p>
+                ) : (
+                  <div className="space-y-2 max-h-72 overflow-y-auto">
+                    {bonusMaterials.map((mat) => (
+                      <div key={mat.id} className="flex items-start gap-3 py-2 border-b border-[#f7f2ef] last:border-0">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-800 truncate">{mat.title}</p>
+                          <p className="text-xs text-gray-400">{mat.category} · {mat.fileType} · {mat.downloads} downloads</p>
+                        </div>
+                        <a href={mat.fileUrl} target="_blank" rel="noopener noreferrer" className="text-brand-600 hover:text-brand-800 shrink-0 mt-0.5">
+                          <ExternalLink size={13} />
+                        </a>
+                        <form action={deleteBonusMaterial.bind(null, mat.id)}>
+                          <button type="submit" className="text-red-400 hover:text-red-600 transition-colors">
+                            <Trash2 size={13} />
+                          </button>
+                        </form>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 

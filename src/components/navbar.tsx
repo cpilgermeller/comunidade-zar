@@ -7,7 +7,7 @@ import { NotificationBell } from './notification-bell'
 import {
   Home, MessageSquare, Users, Heart, Plus, Shield,
   Scale, BookOpen, LogOut, Zap, ExternalLink,
-  ChevronRight, Star, Sparkles, Briefcase, Bookmark,
+  ChevronRight, Star, Sparkles, Briefcase, Bookmark, Gift,
 } from 'lucide-react'
 
 export async function Navbar() {
@@ -88,6 +88,9 @@ export async function Navbar() {
 
         {/* Trilha de Evolução */}
         <NavItem href="/trilha" icon={<Sparkles size={16} />} label="Trilha de Evolução" />
+
+        {/* Materiais Bônus */}
+        <NavItem href="/materiais" icon={<Gift size={16} />} label="Materiais Bônus" accent="amber" />
 
         {/* Depoimentos */}
         <NavItem href="/depoimentos" icon={<Heart size={16} />} label="Depoimentos" />
