@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { Navbar } from '@/components/navbar'
@@ -69,78 +70,76 @@ export default async function HomePage() {
       <main className="flex-1 overflow-y-auto bg-[#f7f7f5]">
 
         {/* ── Hero ── */}
-        <div className="relative overflow-hidden" style={{ minHeight: 280 }}>
-          {/* Fundo degradê escuro-quente */}
-          <div className="absolute inset-0 pointer-events-none" style={{
-            background: 'linear-gradient(135deg, #0d0a06 0%, #1a1208 30%, #2c1a08 55%, #3d2510 75%, #4a2d12 100%)',
-          }} />
-          {/* Textura sutil */}
-          <div className="absolute inset-0 pointer-events-none" style={{
-            backgroundImage: 'radial-gradient(ellipse at 80% 50%, rgba(245,158,11,0.12) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(180,100,10,0.08) 0%, transparent 50%)',
-          }} />
-          {/* Águia SVG watermark */}
-          <div className="absolute right-0 top-0 h-full pointer-events-none select-none flex items-center" style={{ opacity: 0.07, width: 320 }}>
-            <svg viewBox="0 0 200 200" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
-              <path d="M100 10 C85 25, 60 30, 40 20 C50 35, 45 55, 30 65 C50 60, 65 70, 60 90 C70 80, 85 82, 90 95 L100 190 L110 95 C115 82, 130 80, 140 90 C135 70, 150 60, 170 65 C155 55, 150 35, 160 20 C140 30, 115 25, 100 10Z M100 30 C88 42, 72 45, 58 38 C65 50, 62 64, 52 72 C66 68, 76 76, 74 88 C80 80, 90 80, 95 90 L100 155 L105 90 C110 80, 120 80, 126 88 C124 76, 134 68, 148 72 C138 64, 135 50, 142 38 C128 45, 112 42, 100 30Z"/>
-            </svg>
+        <div className="relative overflow-hidden bg-[#f5f0e8]" style={{ minHeight: 300 }}>
+          {/* Águia — direita, ocupa metade do hero */}
+          <div className="absolute inset-y-0 right-0 w-3/5 pointer-events-none select-none">
+            <Image
+              src="https://images.unsplash.com/photo-1611095970735-5b44ed7e8ddd?w=1200&q=80&auto=format&fit=crop&crop=center"
+              alt=""
+              fill
+              priority
+              className="object-cover"
+              style={{ objectPosition: '40% center' }}
+            />
+            {/* Fade da esquerda para o centro — mesclando com o fundo creme */}
+            <div className="absolute inset-0" style={{
+              background: 'linear-gradient(to right, #f5f0e8 0%, rgba(245,240,232,0.7) 25%, rgba(245,240,232,0.1) 60%, transparent 100%)',
+            }} />
           </div>
 
-          <div className="relative max-w-5xl mx-auto px-8 py-10 grid grid-cols-5 gap-8 items-center">
+          {/* Quote no canto direito — sobre a foto */}
+          <div className="absolute right-6 top-1/2 -translate-y-1/2 text-right z-10 hidden lg:block" style={{ maxWidth: 220 }}>
+            <p className="font-display text-2xl leading-snug italic" style={{ color: 'rgba(120,80,20,0.85)' }}>
+              Mais que teoria,<br />
+              uma comunidade<br />
+              que caminha<br />
+              com você.
+            </p>
+          </div>
 
-            {/* Left: main content */}
-            <div className="col-span-3">
-              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(253,230,138,0.85)' }}>
+          {/* Conteúdo principal — esquerda clara */}
+          <div className="relative z-10 max-w-5xl mx-auto px-8 py-12">
+            <div className="max-w-lg">
+              <p className="text-xs font-bold uppercase tracking-widest mb-3 text-amber-700">
                 Comunidade ZAR
               </p>
-              <h1 className="text-5xl font-black tracking-tight leading-[1.05] mb-4 text-white">
+              <h1 className="text-5xl font-black tracking-tight leading-[1.05] mb-4 text-gray-900">
                 Olá, {firstName}!
               </h1>
-              <p className="text-base leading-relaxed max-w-md mb-7" style={{ color: 'rgba(255,255,255,0.7)' }}>
+              <p className="text-base leading-relaxed mb-7 text-gray-500">
                 Aqui você aprende, compartilha casos, acessa jurisprudências e cresce com outros advogados ZAR.
               </p>
 
               <div className="flex items-center gap-3 mb-8">
                 <Link href="/discussoes"
-                  className="flex items-center gap-2 text-sm font-bold px-5 py-3 rounded-xl transition-all text-gray-900"
-                  style={{ background: 'linear-gradient(135deg, #fde68a, #f59e0b)', boxShadow: '0 4px 16px rgba(245,158,11,.35)' }}>
+                  className="flex items-center gap-2 text-sm font-bold px-5 py-3 rounded-xl transition-all text-white"
+                  style={{ background: 'linear-gradient(135deg, #0d1f6e, #102882)', boxShadow: '0 4px 16px rgba(16,40,130,.25)' }}>
                   <MessageSquare size={14} /> Ver discussões <ArrowRight size={13} />
                 </Link>
                 {session && (
                   <Link href="/discussoes/nova"
-                    className="flex items-center gap-2 text-sm font-semibold px-5 py-3 rounded-xl transition-all text-white border"
-                    style={{ background: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.25)' }}>
+                    className="flex items-center gap-2 text-sm font-semibold px-5 py-3 rounded-xl transition-all text-gray-700 border border-gray-300 bg-white/60 hover:bg-white">
                     <Plus size={14} /> Nova discussão
                   </Link>
                 )}
               </div>
 
-              <div className="flex items-center gap-5 text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              <div className="flex items-center gap-5 text-sm text-gray-400">
                 <span className="flex items-center gap-1.5">
-                  <Users size={13} style={{ color: '#fde68a' }} />
-                  <strong className="text-white font-black">{totalMembers}</strong> membros
+                  <Users size={13} className="text-amber-500" />
+                  <strong className="text-gray-800 font-black">{totalMembers}</strong> membros
                 </span>
-                <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
+                <span className="text-gray-200">·</span>
                 <span className="flex items-center gap-1.5">
-                  <MessageSquare size={13} style={{ color: '#fde68a' }} />
-                  <strong className="text-white font-black">{totalThreads}</strong> discussões
+                  <MessageSquare size={13} className="text-amber-500" />
+                  <strong className="text-gray-800 font-black">{totalThreads}</strong> discussões
                 </span>
-                <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
+                <span className="text-gray-200">·</span>
                 <span className="flex items-center gap-1.5">
-                  <Scale size={13} style={{ color: '#fde68a' }} />
-                  <strong className="text-white font-black">{totalJuris}</strong> jurisprudências
+                  <Scale size={13} className="text-amber-500" />
+                  <strong className="text-gray-800 font-black">{totalJuris}</strong> jurisprudências
                 </span>
               </div>
-            </div>
-
-            {/* Right: decorative serif quote */}
-            <div className="col-span-2 text-right flex flex-col items-end justify-center gap-4 py-2">
-              <p className="font-display text-3xl leading-snug italic" style={{ color: 'rgba(253,230,138,0.9)' }}>
-                Mais que teoria,<br />
-                uma comunidade<br />
-                que caminha<br />
-                com você.
-              </p>
-              <div className="w-16 h-px rounded-full" style={{ background: 'rgba(253,230,138,0.35)' }} />
             </div>
           </div>
         </div>
