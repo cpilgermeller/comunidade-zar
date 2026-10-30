@@ -217,14 +217,43 @@ function EditUserModal({ user, onClose }: { user: EditableUser; onClose: () => v
 
 export function CreateBonusMaterialForm() {
   const [pending, setPending] = useState(false)
+  const [uploadMode, setUploadMode] = useState<'file' | 'url'>('file')
+  const [uploadProgress, setUploadProgress] = useState('')
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState(false)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setPending(true)
+    setError('')
+    setSuccess(false)
     const form = e.currentTarget
-    await createBonusMaterial(new FormData(form))
-    form.reset()
-    setPending(false)
+    const fd = new FormData(form)
+
+    try {
+      if (uploadMode === 'file') {
+        const file = (form.querySelector('input[name="file"]') as HTMLInputElement)?.files?.[0]
+        if (!file) { setError('Selecione um arquivo.'); setPending(false); return }
+        setUploadProgress('Enviando arquivo...')
+        const uploadFd = new FormData()
+        uploadFd.append('file', file)
+        const res = await fetch('/api/upload/material', { method: 'POST', body: uploadFd })
+        const json = await res.json()
+        if (!res.ok) { setError(json.error ?? 'Erro no upload'); setPending(false); setUploadProgress(''); return }
+        fd.set('fileUrl', json.url)
+        setUploadProgress('Salvando...')
+      }
+
+      await createBonusMaterial(fd)
+      form.reset()
+      setSuccess(true)
+      setUploadProgress('')
+    } catch {
+      setError('Erro ao salvar material.')
+    } finally {
+      setPending(false)
+      setUploadProgress('')
+    }
   }
 
   return (
@@ -235,7 +264,31 @@ export function CreateBonusMaterialForm() {
       <form onSubmit={handleSubmit} className="space-y-3">
         <input name="title" required placeholder="Título do material" className={inputCls} />
         <textarea name="description" required placeholder="Descrição curta" rows={2} className={`${inputCls} resize-none`} />
-        <input name="fileUrl" required placeholder="URL do arquivo (Google Drive, Dropbox, etc.)" className={inputCls} />
+
+        {/* Toggle upload / URL */}
+        <div>
+          <div className="flex gap-2 mb-2">
+            <button type="button"
+              onClick={() => setUploadMode('file')}
+              className={`flex-1 text-xs font-semibold py-2 rounded-lg transition-colors border ${uploadMode === 'file' ? 'bg-amber-50 border-amber-300 text-amber-700' : 'border-gray-200 text-gray-400'}`}>
+              📁 Upload do computador
+            </button>
+            <button type="button"
+              onClick={() => setUploadMode('url')}
+              className={`flex-1 text-xs font-semibold py-2 rounded-lg transition-colors border ${uploadMode === 'url' ? 'bg-brand-50 border-brand-300 text-brand-700' : 'border-gray-200 text-gray-400'}`}>
+              🔗 URL externa
+            </button>
+          </div>
+          {uploadMode === 'file' ? (
+            <input name="file" type="file"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.mp4,.webm,.mov"
+              className="w-full text-sm text-gray-600 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 border border-gray-200 rounded-lg p-1 cursor-pointer"
+            />
+          ) : (
+            <input name="fileUrl" required={uploadMode === 'url'} placeholder="https://drive.google.com/... ou Dropbox..." className={inputCls} />
+          )}
+        </div>
+
         <div className="grid grid-cols-2 gap-2">
           <select name="fileType" className={inputCls}>
             {['PDF', 'DOCX', 'XLSX', 'PPTX', 'VIDEO', 'LINK'].map((t) => (
@@ -249,9 +302,14 @@ export function CreateBonusMaterialForm() {
           </select>
         </div>
         <input name="thumbnailUrl" placeholder="URL da miniatura (opcional)" className={inputCls} />
+
+        {error && <p className="text-xs text-red-500">{error}</p>}
+        {uploadProgress && <p className="text-xs text-amber-600">{uploadProgress}</p>}
+        {success && <p className="text-xs text-emerald-600">✓ Material adicionado com sucesso!</p>}
+
         <button type="submit" disabled={pending}
           className="w-full bg-amber-600 hover:bg-amber-700 disabled:opacity-60 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
-          {pending ? 'Salvando...' : 'Adicionar material'}
+          {pending ? (uploadProgress || 'Salvando...') : 'Adicionar material'}
         </button>
       </form>
     </div>

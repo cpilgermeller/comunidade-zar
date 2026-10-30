@@ -6,9 +6,9 @@ import { Avatar } from '@/components/avatar'
 import { AnnouncementCard } from '@/components/announcement-card'
 import Link from 'next/link'
 import {
-  Megaphone, TrendingUp, Trophy,
-  ExternalLink, MessageSquare, Eye, ChevronRight,
-  ArrowRight, Flame, Star, Users, BookOpen, Scale,
+  Megaphone, TrendingUp, Trophy, ExternalLink,
+  MessageSquare, Eye, ChevronRight, ArrowRight,
+  Flame, Star, Users, BookOpen, Scale, Plus,
 } from 'lucide-react'
 
 const MONTH_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
@@ -25,7 +25,7 @@ export default async function HomePage() {
     db.announcement.findMany({ orderBy: [{ pinned: 'desc' }, { createdAt: 'desc' }], take: 5, include: { author: { select: { name: true } } } }),
     db.event.findMany({ where: { eventDate: { gte: startOfToday } }, orderBy: { eventDate: 'asc' }, take: 4 }),
     db.thread.findMany({
-      where: { createdAt: { gte: sevenDaysAgo } }, orderBy: [{ views: 'desc' }], take: 5,
+      where: { createdAt: { gte: sevenDaysAgo } }, orderBy: [{ views: 'desc' }], take: 6,
       include: { author: { select: { name: true } }, category: { select: { name: true, color: true } }, _count: { select: { comments: true, likes: true } } },
     }),
     db.user.findMany({
@@ -57,7 +57,7 @@ export default async function HomePage() {
         u._count.fundamentos    * 4  +
         u._count.testimonials   * 10,
     }))
-    .filter((u) => u.score > 0).sort((a, b) => b.score - a.score).slice(0, 10)
+    .filter((u) => u.score > 0).sort((a, b) => b.score - a.score).slice(0, 8)
 
   const medals = ['🥇', '🥈', '🥉']
   const monthName = now.toLocaleDateString('pt-BR', { month: 'long' })
@@ -66,71 +66,98 @@ export default async function HomePage() {
   return (
     <div className="flex h-full">
       <Navbar />
-      <main className="flex-1 overflow-y-auto bg-white">
+      <main className="flex-1 overflow-y-auto bg-[#f7f7f5]">
 
         {/* ── Hero ── */}
-        <div className="border-b border-gray-100 bg-white">
-          <div className="max-w-5xl mx-auto px-8 pt-10 pb-8">
-            <p className="text-xs font-bold uppercase tracking-widest text-brand-700 mb-3">
-              Comunidade ZAR
-            </p>
-            <h1 className="text-4xl font-black text-gray-950 tracking-tight leading-tight mb-3">
-              {session ? `Olá, ${firstName}.` : 'Bem-vindo.'}
-            </h1>
-            <p className="text-base text-gray-500 max-w-lg mb-7 leading-relaxed">
-              Aqui você aprende, compartilha casos, acessa jurisprudências e cresce com outros advogados ZAR.
-            </p>
+        <div className="relative overflow-hidden" style={{
+          background: 'linear-gradient(135deg, #fdf6ec 0%, #faebd7 35%, #f5ddb8 65%, #eedaa0 100%)',
+          minHeight: 260,
+        }}>
+          {/* Texture overlay */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage: 'radial-gradient(circle at 70% 50%, rgba(255,255,255,0.5) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(245,158,11,0.08) 0%, transparent 50%)',
+          }} />
+          {/* Decorative circles */}
+          <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)' }} />
+          <div className="absolute right-1/3 bottom-0 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(16,40,130,0.04) 0%, transparent 70%)' }} />
 
-            <div className="flex items-center gap-3 flex-wrap mb-8">
-              <Link href="/discussoes"
-                className="flex items-center gap-2 text-sm font-bold px-5 py-3 rounded-xl text-white transition-all"
-                style={{ background: 'linear-gradient(135deg, #102882, #1537ab)', boxShadow: '0 4px 16px rgba(16,40,130,.25)' }}>
-                Ver discussões <ArrowRight size={14} />
-              </Link>
-              {session && (
-                <Link href="/discussoes/nova"
-                  className="flex items-center gap-2 text-sm font-semibold px-5 py-3 rounded-xl transition-all text-gray-700 border border-gray-200 hover:border-brand-300 hover:text-brand-800 bg-white">
-                  <MessageSquare size={14} /> Nova discussão
+          <div className="relative max-w-5xl mx-auto px-8 py-10 grid grid-cols-5 gap-8 items-center">
+
+            {/* Left: main content */}
+            <div className="col-span-3">
+              <p className="text-xs font-bold uppercase tracking-widest text-amber-700 mb-3">
+                Comunidade ZAR
+              </p>
+              <h1 className="text-5xl font-black tracking-tight leading-[1.05] mb-4" style={{ color: '#1a1a1a' }}>
+                Olá, {firstName}!
+              </h1>
+              <p className="text-base text-gray-600 leading-relaxed max-w-md mb-7">
+                Aqui você aprende, compartilha casos, acessa jurisprudências e cresce com outros advogados ZAR.
+              </p>
+
+              <div className="flex items-center gap-3 mb-8">
+                <Link href="/discussoes"
+                  className="flex items-center gap-2 text-sm font-bold px-5 py-3 rounded-xl text-white transition-all"
+                  style={{ background: '#1a1a1a', boxShadow: '0 4px 16px rgba(0,0,0,.18)' }}>
+                  <MessageSquare size={14} /> Ver discussões <ArrowRight size={13} />
                 </Link>
-              )}
+                {session && (
+                  <Link href="/discussoes/nova"
+                    className="flex items-center gap-2 text-sm font-semibold px-5 py-3 rounded-xl transition-all border"
+                    style={{ background: 'rgba(255,255,255,0.7)', borderColor: 'rgba(0,0,0,0.12)', color: '#333' }}>
+                    <Plus size={14} /> Nova discussão
+                  </Link>
+                )}
+              </div>
+
+              <div className="flex items-center gap-5 text-sm text-gray-600">
+                <span className="flex items-center gap-1.5">
+                  <Users size={13} className="text-amber-700" />
+                  <strong className="text-gray-900 font-black">{totalMembers}</strong> membros
+                </span>
+                <span className="text-gray-300">·</span>
+                <span className="flex items-center gap-1.5">
+                  <MessageSquare size={13} className="text-amber-700" />
+                  <strong className="text-gray-900 font-black">{totalThreads}</strong> discussões
+                </span>
+                <span className="text-gray-300">·</span>
+                <span className="flex items-center gap-1.5">
+                  <Scale size={13} className="text-amber-700" />
+                  <strong className="text-gray-900 font-black">{totalJuris}</strong> jurisprudências
+                </span>
+              </div>
             </div>
 
-            {/* Stats row */}
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Users size={14} className="text-brand-700" />
-                <span className="font-black text-gray-900">{totalMembers}</span> membros
-              </div>
-              <div className="w-px h-4 bg-gray-200" />
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <MessageSquare size={14} className="text-brand-700" />
-                <span className="font-black text-gray-900">{totalThreads}</span> discussões
-              </div>
-              <div className="w-px h-4 bg-gray-200" />
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <Scale size={14} className="text-brand-700" />
-                <span className="font-black text-gray-900">{totalJuris}</span> jurisprudências
-              </div>
+            {/* Right: decorative serif quote */}
+            <div className="col-span-2 text-right flex flex-col items-end justify-center gap-4 py-2">
+              <p className="font-display text-3xl leading-snug text-amber-900/70 italic">
+                Mais que teoria,<br />
+                uma comunidade<br />
+                que caminha<br />
+                com você.
+              </p>
+              <div className="w-16 h-0.5 bg-amber-700/30 rounded-full" />
             </div>
           </div>
         </div>
 
+        {/* ── Main content ── */}
         <div className="max-w-5xl mx-auto px-8 py-8 animate-fade-in">
-          <div className="grid grid-cols-3 gap-7">
+          <div className="grid grid-cols-3 gap-6">
 
             {/* ── Coluna principal ── */}
-            <div className="col-span-2 space-y-8">
+            <div className="col-span-2 space-y-7">
 
               {/* Avisos */}
               {announcements.length > 0 && (
                 <section>
                   <SectionLabel icon={<Megaphone size={13} />} title="Avisos" />
-                  <div className="card-premium overflow-hidden">
-                    <div className="divide-y" style={{ borderColor: 'rgba(16,40,130,0.06)' }}>
-                      {announcements.map((ann) => (
-                        <AnnouncementCard key={ann.id} ann={ann} />
-                      ))}
-                    </div>
+                  <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #ebebeb', boxShadow: '0 1px 3px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.04)' }}>
+                    {announcements.map((ann, i) => (
+                      <div key={ann.id} style={{ borderBottom: i < announcements.length - 1 ? '1px solid #f2f2f2' : 'none' }}>
+                        <AnnouncementCard ann={ann} />
+                      </div>
+                    ))}
                   </div>
                 </section>
               )}
@@ -147,8 +174,8 @@ export default async function HomePage() {
                       const weekday = WEEKDAY_SHORT[d.getDay()]
                       const hour = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
                       return (
-                        <div key={ev.id} className="flex items-center gap-4 px-5 py-4 bg-white rounded-2xl border border-gray-100 hover:border-brand-200 hover:shadow-sm transition-all">
-                          {/* Date block */}
+                        <div key={ev.id} className="flex items-center gap-4 px-5 py-4 bg-white rounded-2xl transition-all hover:shadow-md"
+                          style={{ border: '1px solid #ebebeb', boxShadow: '0 1px 3px rgba(0,0,0,.04)' }}>
                           <div className="shrink-0 w-12 rounded-xl overflow-hidden text-center border border-gray-100">
                             <div className="py-0.5 bg-brand-800">
                               <p className="text-[9px] font-black text-white uppercase tracking-wider">{monthStr}</p>
@@ -175,37 +202,38 @@ export default async function HomePage() {
                 </section>
               )}
 
-              {/* Trending */}
+              {/* Discussões em destaque */}
               <section>
                 <div className="flex items-center justify-between mb-4">
-                  <SectionLabel icon={<Flame size={13} className="text-rose-500" />} title="Trending esta semana" />
+                  <SectionLabel icon={<Flame size={13} className="text-rose-500" />} title="Discussões em destaque" />
                   <Link href="/discussoes?ordem=popular" className="flex items-center gap-1 text-xs font-bold text-brand-700 hover:text-brand-900 transition-colors">
                     Ver todas <ChevronRight size={13} />
                   </Link>
                 </div>
                 {trendingThreads.length === 0 ? (
-                  <div className="card-premium px-5 py-12 text-center">
+                  <div className="bg-white rounded-2xl px-5 py-12 text-center" style={{ border: '1px solid #ebebeb' }}>
                     <TrendingUp size={24} className="mx-auto mb-3 text-gray-200" />
                     <p className="font-semibold text-gray-400">Nenhuma discussão esta semana.</p>
                     <p className="text-sm text-gray-300 mt-1">Seja o primeiro a postar algo!</p>
                   </div>
                 ) : (
-                  <div className="card-premium overflow-hidden">
+                  <div className="bg-white rounded-2xl overflow-hidden" style={{ border: '1px solid #ebebeb', boxShadow: '0 1px 3px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.04)' }}>
                     {trendingThreads.map((t, i) => (
                       <Link key={t.id} href={`/discussoes/${t.id}`}>
                         <div className="hover-row flex items-center gap-4 px-5 py-4 group"
-                          style={{ borderBottom: i < trendingThreads.length - 1 ? '1px solid rgba(16,40,130,0.05)' : 'none' }}
-                        >
-                          <span className={`text-lg font-black w-7 text-center shrink-0 ${
-                            i === 0 ? 'text-amber-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-700/40' : 'text-gray-200'
-                          }`}>{i + 1}</span>
+                          style={{ borderBottom: i < trendingThreads.length - 1 ? '1px solid #f2f2f2' : 'none' }}>
+                          <Avatar name={t.author.name} size="sm" />
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold text-gray-800 group-hover:text-brand-800 transition-colors truncate">{t.title}</p>
                             <div className="flex items-center gap-2 mt-1">
                               <span className="text-[10px] px-2 py-0.5 rounded-full text-white font-bold" style={{ backgroundColor: t.category.color }}>{t.category.name}</span>
-                              <span className="flex items-center gap-1 text-xs text-gray-400"><MessageSquare size={10} />{t._count.comments}</span>
-                              <span className="flex items-center gap-1 text-xs text-gray-400"><Eye size={10} />{t.views}</span>
+                              <span className="text-xs text-gray-400">{t.author.name.split(' ')[0]}</span>
                             </div>
+                          </div>
+                          <div className="flex items-center gap-3 text-xs text-gray-400 shrink-0">
+                            <span className="flex items-center gap-1"><MessageSquare size={11} />{t._count.comments}</span>
+                            <span className="flex items-center gap-1"><Eye size={11} />{t.views}</span>
+                            <ChevronRight size={14} className="text-gray-300" />
                           </div>
                         </div>
                       </Link>
@@ -215,10 +243,12 @@ export default async function HomePage() {
               </section>
             </div>
 
-            {/* ── Ranking ── */}
-            <div className="col-span-1">
-              <div className="card-premium overflow-hidden sticky top-6">
-                <div className="px-5 py-4 border-b border-gray-50" style={{ background: 'linear-gradient(135deg, #fffbeb, #fef3c7 80%, #fff)' }}>
+            {/* ── Coluna direita ── */}
+            <div className="col-span-1 space-y-5">
+
+              {/* Ranking */}
+              <div className="bg-white rounded-2xl overflow-hidden sticky top-6" style={{ border: '1px solid #ebebeb', boxShadow: '0 1px 3px rgba(0,0,0,.04), 0 6px 20px rgba(0,0,0,.04)' }}>
+                <div className="px-5 py-4" style={{ background: 'linear-gradient(135deg, #fffbeb, #fef3c7 80%, #fff)', borderBottom: '1px solid #f2f2f2' }}>
                   <h2 className="flex items-center gap-2 font-black text-gray-900">
                     <Trophy size={15} className="text-amber-500" /> Ranking do Mês
                   </h2>
@@ -228,7 +258,6 @@ export default async function HomePage() {
                   <div className="px-5 py-10 text-center">
                     <Star size={24} className="text-gray-200 mx-auto mb-2" />
                     <p className="text-sm font-semibold text-gray-400">Nenhuma atividade ainda.</p>
-                    <p className="text-sm text-gray-300 mt-1">Seja o primeiro! 🚀</p>
                   </div>
                 ) : (
                   <div className="p-3 space-y-0.5">
@@ -237,7 +266,9 @@ export default async function HomePage() {
                         <div className={`flex items-center gap-3 p-2.5 rounded-xl transition-colors cursor-pointer ${
                           i === 0 ? 'bg-amber-50' : i === 1 ? 'bg-gray-50' : i === 2 ? 'bg-orange-50/50' : 'hover-navy-sm'
                         }`}>
-                          <span className="text-base w-5 text-center shrink-0">{medals[i] ?? <span className="text-xs font-black text-gray-300">{i + 1}</span>}</span>
+                          <span className="text-base w-5 text-center shrink-0 leading-none">
+                            {medals[i] ?? <span className="text-xs font-black text-gray-300">{i + 1}</span>}
+                          </span>
                           <Avatar name={user.name} size="sm" />
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-bold text-gray-800 truncate">{user.name.split(' ')[0]}</p>
@@ -249,8 +280,34 @@ export default async function HomePage() {
                     ))}
                   </div>
                 )}
-                <div className="px-5 py-3 border-t border-gray-50">
-                  <p className="text-[10px] text-gray-300 text-center">Resposta · Discussão · Juris · Depoimento</p>
+                <div className="px-5 py-3" style={{ borderTop: '1px solid #f2f2f2' }}>
+                  <Link href="/membros" className="flex items-center justify-center gap-1 text-xs font-bold text-brand-700 hover:text-brand-900 transition-colors">
+                    Ver ranking completo <ChevronRight size={12} />
+                  </Link>
+                </div>
+              </div>
+
+              {/* CTA card */}
+              <div className="rounded-2xl overflow-hidden relative" style={{
+                background: 'linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+                boxShadow: '0 4px 24px rgba(0,0,0,.15)',
+              }}>
+                <div className="absolute inset-0 pointer-events-none" style={{
+                  backgroundImage: 'radial-gradient(circle at 80% 20%, rgba(245,158,11,0.12) 0%, transparent 50%)',
+                }} />
+                <div className="relative px-5 py-6">
+                  <p className="font-display text-xl italic leading-snug text-white/90 mb-4">
+                    Continue<br />evoluindo com<br />a comunidade.
+                  </p>
+                  <p className="text-xs text-white/50 leading-relaxed mb-5">
+                    Compartilhe, aprenda e ajude outros advogados a crescerem também.
+                  </p>
+                  <Link href="/discussoes/nova"
+                    className="flex items-center justify-between gap-2 text-sm font-bold px-4 py-3 rounded-xl transition-all"
+                    style={{ background: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.3)', color: '#fde68a' }}>
+                    Fazer uma nova discussão
+                    <ArrowRight size={14} />
+                  </Link>
                 </div>
               </div>
             </div>
