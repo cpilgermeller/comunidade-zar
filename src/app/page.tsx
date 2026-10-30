@@ -70,19 +70,20 @@ export default async function HomePage() {
 
         {/* ── Hero ── */}
         <div className="relative overflow-hidden" style={{ minHeight: 280 }}>
-          {/* Foto de fundo */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="https://images.unsplash.com/photo-1611095970735-5b44ed7e8ddd?w=1600&q=80&auto=format&fit=crop&crop=center"
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
-            style={{ objectPosition: '70% center', filter: 'brightness(0.6) saturate(0.85)' }}
-          />
-          {/* Overlay quente */}
+          {/* Fundo degradê escuro-quente */}
           <div className="absolute inset-0 pointer-events-none" style={{
-            background: 'linear-gradient(135deg, rgba(20,14,8,0.75) 0%, rgba(40,28,12,0.5) 40%, rgba(180,100,10,0.18) 75%, rgba(245,158,11,0.08) 100%)',
+            background: 'linear-gradient(135deg, #0d0a06 0%, #1a1208 30%, #2c1a08 55%, #3d2510 75%, #4a2d12 100%)',
           }} />
+          {/* Textura sutil */}
+          <div className="absolute inset-0 pointer-events-none" style={{
+            backgroundImage: 'radial-gradient(ellipse at 80% 50%, rgba(245,158,11,0.12) 0%, transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(180,100,10,0.08) 0%, transparent 50%)',
+          }} />
+          {/* Águia SVG watermark */}
+          <div className="absolute right-0 top-0 h-full pointer-events-none select-none flex items-center" style={{ opacity: 0.07, width: 320 }}>
+            <svg viewBox="0 0 200 200" fill="white" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%' }}>
+              <path d="M100 10 C85 25, 60 30, 40 20 C50 35, 45 55, 30 65 C50 60, 65 70, 60 90 C70 80, 85 82, 90 95 L100 190 L110 95 C115 82, 130 80, 140 90 C135 70, 150 60, 170 65 C155 55, 150 35, 160 20 C140 30, 115 25, 100 10Z M100 30 C88 42, 72 45, 58 38 C65 50, 62 64, 52 72 C66 68, 76 76, 74 88 C80 80, 90 80, 95 90 L100 155 L105 90 C110 80, 120 80, 126 88 C124 76, 134 68, 148 72 C138 64, 135 50, 142 38 C128 45, 112 42, 100 30Z"/>
+            </svg>
+          </div>
 
           <div className="relative max-w-5xl mx-auto px-8 py-10 grid grid-cols-5 gap-8 items-center">
 
