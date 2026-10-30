@@ -11,13 +11,13 @@ import {
 
 const CATEGORIES = ['Todos', 'Estratégias', 'Prospecção', 'Atendimento', 'Contratos', 'Marketing', 'Petições', 'Gestão', 'Geral']
 
-const FILE_CONFIG: Record<string, { icon: React.ReactNode; color: string; bg: string }> = {
-  PDF:   { icon: <FileText size={18} />,         color: '#dc2626', bg: '#fef2f2' },
-  DOCX:  { icon: <FileText size={18} />,         color: '#2563eb', bg: '#eff6ff' },
-  XLSX:  { icon: <FileSpreadsheet size={18} />,  color: '#16a34a', bg: '#f0fdf4' },
-  PPTX:  { icon: <Presentation size={18} />,     color: '#ea580c', bg: '#fff7ed' },
-  VIDEO: { icon: <Video size={18} />,            color: '#7c3aed', bg: '#f5f3ff' },
-  LINK:  { icon: <Link2 size={18} />,            color: '#0891b2', bg: '#ecfeff' },
+const FILE_CONFIG: Record<string, { icon: React.ReactNode; iconLg: React.ReactNode; color: string; bg: string; grad: string }> = {
+  PDF:   { icon: <FileText size={18} />,        iconLg: <FileText size={28} />,        color: '#dc2626', bg: '#fef2f2', grad: 'linear-gradient(135deg, #991b1b, #dc2626)' },
+  DOCX:  { icon: <FileText size={18} />,        iconLg: <FileText size={28} />,        color: '#2563eb', bg: '#eff6ff', grad: 'linear-gradient(135deg, #1e40af, #3b82f6)' },
+  XLSX:  { icon: <FileSpreadsheet size={18} />, iconLg: <FileSpreadsheet size={28} />, color: '#16a34a', bg: '#f0fdf4', grad: 'linear-gradient(135deg, #14532d, #16a34a)' },
+  PPTX:  { icon: <Presentation size={18} />,   iconLg: <Presentation size={28} />,   color: '#ea580c', bg: '#fff7ed', grad: 'linear-gradient(135deg, #9a3412, #ea580c)' },
+  VIDEO: { icon: <Video size={18} />,           iconLg: <Video size={28} />,           color: '#7c3aed', bg: '#f5f3ff', grad: 'linear-gradient(135deg, #4c1d95, #7c3aed)' },
+  LINK:  { icon: <Link2 size={18} />,           iconLg: <Link2 size={28} />,           color: '#0891b2', bg: '#ecfeff', grad: 'linear-gradient(135deg, #164e63, #0891b2)' },
 }
 
 function fileConfig(type: string) {
@@ -146,14 +146,24 @@ export default async function MateriaisPage({
                   <div key={mat.id}
                     className="group bg-white rounded-2xl border border-[#e8edf5] shadow-sm hover:shadow-md hover:border-brand-200 hover:-translate-y-0.5 transition-all overflow-hidden"
                     style={{ boxShadow: '0 1px 3px rgba(16,40,130,.06), 0 4px 16px rgba(16,40,130,.04)' }}>
-                    <div className="flex gap-4 p-5">
-                      {/* File type icon */}
-                      <div className="shrink-0 w-12 h-12 rounded-xl flex items-center justify-center" style={{ color: fc.color, backgroundColor: fc.bg }}>
-                        {fc.icon}
+                    <div className="flex">
+                      {/* Thumbnail */}
+                      <div className="shrink-0 w-28 self-stretch flex flex-col items-center justify-center gap-2 relative overflow-hidden"
+                        style={{ background: mat.thumbnailUrl ? undefined : fc.grad }}>
+                        {mat.thumbnailUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={mat.thumbnailUrl} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <>
+                            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 70% 30%, rgba(255,255,255,0.6) 0%, transparent 60%)' }} />
+                            <div className="text-white/90">{fc.iconLg}</div>
+                            <span className="text-[10px] font-black tracking-widest text-white/70 uppercase">{mat.fileType}</span>
+                          </>
+                        )}
                       </div>
 
                       {/* Content */}
-                      <div className="flex-1 min-w-0">
+                      <div className="flex-1 min-w-0 p-5">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -195,7 +205,7 @@ export default async function MateriaisPage({
                           )}
                         </div>
                       </div>
-                    </div>
+                    </div>{/* end flex */}
                   </div>
                 )
               })}
