@@ -66,33 +66,26 @@ export default async function DiscussoesPage({
   return (
     <div className="flex h-full">
       <Navbar />
-      <main className="flex-1 overflow-y-auto bg-[#f4f6fb]">
+      <main className="flex-1 overflow-y-auto bg-white">
         {session && <LastSeenUpdater />}
 
         {/* ── Page header ── */}
-        <div className="relative overflow-hidden" style={{
-          background: 'radial-gradient(600px 280px at 90% -10%, rgba(245,158,11,.12), transparent 60%), linear-gradient(135deg, #060e38 0%, #102882 60%, #0c1e68 100%)',
-        }}>
-          <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
-            backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)',
-            backgroundSize: '44px 44px',
-            maskImage: 'linear-gradient(180deg,#000 50%,transparent)',
-          }} />
-          <div className="relative max-w-3xl mx-auto px-6 py-8 flex items-end justify-between">
+        <div className="border-b border-gray-100 bg-white">
+          <div className="max-w-3xl mx-auto px-6 pt-10 pb-7 flex items-end justify-between">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Comunidade ZAR</p>
-              <h1 className="text-2xl font-black text-white tracking-tight">
+              <p className="text-xs font-bold uppercase tracking-widest text-brand-700 mb-2">Comunidade ZAR</p>
+              <h1 className="text-3xl font-black text-gray-950 tracking-tight">
                 {selectedCategory ? selectedCategory.name : 'Discussões'}
               </h1>
-              <p className="text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
+              <p className="text-sm text-gray-400 mt-1">
                 {threads.length} discussão{threads.length !== 1 ? 'ões' : ''}
                 {selectedCategory && ` em ${selectedCategory.name}`}
               </p>
             </div>
             {session && (
               <Link href="/discussoes/nova"
-                className="flex items-center gap-1.5 text-sm font-bold px-4 py-2.5 rounded-xl transition-all shrink-0 text-brand-900"
-                style={{ background: 'linear-gradient(135deg, #fde68a, #f59e0b)', boxShadow: '0 4px 14px rgba(245,158,11,.28)' }}>
+                className="flex items-center gap-2 text-sm font-bold px-5 py-3 rounded-xl text-white shrink-0 transition-all"
+                style={{ background: 'linear-gradient(135deg, #102882, #1537ab)', boxShadow: '0 4px 14px rgba(16,40,130,.2)' }}>
                 <Plus size={14} /> Nova discussão
               </Link>
             )}
@@ -141,11 +134,10 @@ export default async function DiscussoesPage({
                 name="q"
                 defaultValue={q}
                 placeholder="Buscar discussões..."
-                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-300 transition-colors"
-                style={{ background: '#fff', border: '1px solid rgba(16,40,130,0.1)', boxShadow: '0 1px 3px rgba(16,40,130,0.05)' }}
+                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-300 focus:border-transparent transition-colors bg-white"
               />
             </form>
-            <div className="flex gap-1 p-1 rounded-xl" style={{ background: '#fff', border: '1px solid rgba(16,40,130,0.1)', boxShadow: '0 1px 3px rgba(16,40,130,0.05)' }}>
+            <div className="flex gap-1 p-1 rounded-xl border border-gray-200 bg-white">
               <SortBtn
                 href={`/discussoes?${new URLSearchParams({ ...(q ? { q } : {}), ...(categoria ? { categoria } : {}), ordem: 'recente' }).toString()}`}
                 active={!ordem || ordem === 'recente'}
