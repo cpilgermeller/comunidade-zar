@@ -41,7 +41,8 @@ export async function POST(req: NextRequest) {
     const blob = await put(filename, file, { access: 'public', contentType: file.type })
     return NextResponse.json({ url: blob.url })
   } catch (err) {
-    console.error('Material upload error:', err)
-    return NextResponse.json({ error: 'Erro interno ao salvar arquivo. Tente novamente.' }, { status: 500 })
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('Material upload error:', msg)
+    return NextResponse.json({ error: `Erro ao salvar arquivo: ${msg}` }, { status: 500 })
   }
 }
