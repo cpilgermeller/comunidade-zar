@@ -27,7 +27,7 @@ export async function Navbar() {
 
   return (
     <aside className="w-60 shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto" style={{
-      background: '#0b0e1c',
+      background: '#0d1b3e',
       borderRight: '1px solid rgba(255,255,255,0.05)',
     }}>
 
