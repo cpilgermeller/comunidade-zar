@@ -31,16 +31,16 @@ export async function Navbar() {
     }}>
 
       {/* Logo */}
-      <div className="px-5 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shrink-0"
-            style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', boxShadow: '0 4px 14px rgba(245,158,11,.3)' }}>
-            <Zap size={17} className="text-white fill-white" />
-          </div>
-          <div>
-            <p className="text-[11px] font-bold text-white/50 uppercase tracking-widest leading-none mb-0.5">Comunidade</p>
-            <p className="text-base font-black text-white tracking-tight leading-none">ZAR</p>
-          </div>
+      <div className="px-6 pt-7 pb-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+        <Link href="/" className="flex flex-col items-start group">
+          <Zap size={14} className="mb-1" style={{ color: 'rgba(245,158,11,0.7)' }} />
+          <p className="font-display text-4xl italic leading-none font-bold"
+            style={{ color: '#f5c842', textShadow: '0 2px 12px rgba(245,158,11,0.3)' }}>
+            ZAR
+          </p>
+          <p className="text-[10px] font-bold uppercase tracking-[0.22em] mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>
+            Comunidade
+          </p>
         </Link>
       </div>
 
