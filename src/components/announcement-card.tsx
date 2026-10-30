@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { RichTextDisplay } from './rich-text-editor'
-import { Pin, ChevronDown, ChevronUp } from 'lucide-react'
+import { Megaphone, Pin, ChevronDown, ChevronUp } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
 type Announcement = {
@@ -18,46 +18,43 @@ export function AnnouncementCard({ ann }: { ann: Announcement }) {
   const [expanded, setExpanded] = useState(ann.pinned)
 
   return (
-    <div className={`px-5 py-4 ${ann.pinned ? 'bg-gold-50/50' : ''}`}>
-      <div className="flex items-start gap-2.5">
-        {ann.pinned && <Pin size={12} className="text-gold-500 fill-gold-400 mt-1 shrink-0" />}
-        <div className="flex-1 min-w-0">
+    <div className={`px-5 py-4 ${ann.pinned ? 'bg-amber-50/40' : ''}`}>
+      <button type="button" onClick={() => setExpanded((v) => !v)} className="w-full text-left group">
+        <div className="flex items-center gap-4">
+          {/* Ícone */}
+          <div className="shrink-0 w-11 h-11 rounded-xl flex items-center justify-center"
+            style={{ background: ann.pinned ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #e8f0fe, #c7d7fd)' }}>
+            {ann.pinned
+              ? <Pin size={16} className="text-white fill-white" />
+              : <Megaphone size={16} className="text-brand-700" />}
+          </div>
 
-          {/* Cabeçalho clicável */}
-          <button
-            type="button"
-            onClick={() => setExpanded((v) => !v)}
-            className="w-full text-left group"
-          >
-            <div className="flex items-start justify-between gap-2 mb-1">
-              <h3 className="text-sm font-bold text-gray-900 group-hover:text-brand-800 transition-colors leading-snug">
+          {/* Conteúdo */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="font-bold text-gray-900 group-hover:text-brand-800 transition-colors leading-snug text-sm">
                 {ann.title}
               </h3>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[11px] text-[#b5a9a4]">{formatDate(ann.createdAt)}</span>
+                <span className="text-xs text-gray-400">{formatDate(ann.createdAt)}</span>
                 {expanded
-                  ? <ChevronUp size={14} className="text-[#b5a9a4]" />
-                  : <ChevronDown size={14} className="text-[#b5a9a4]" />}
+                  ? <ChevronUp size={14} className="text-gray-300" />
+                  : <ChevronDown size={14} className="text-gray-300" />}
               </div>
             </div>
-
-            {/* Preview quando fechado */}
             {!expanded && (
-              <p className="text-xs text-[#b5a9a4] mt-0.5">Clique para ler o aviso completo</p>
+              <p className="text-xs text-gray-400 mt-0.5">Clique para ler o aviso completo e conferir todas as novidades.</p>
             )}
-          </button>
-
-          {/* Conteúdo expandido */}
-          {expanded && (
-            <div className="mt-3 text-sm text-gray-600 leading-relaxed border-t border-[#f0eae6] pt-3">
-              <RichTextDisplay html={ann.content} />
-              <p className="text-[11px] text-[#c8bbb6] mt-3">
-                Por {ann.author.name}
-              </p>
-            </div>
-          )}
+          </div>
         </div>
-      </div>
+      </button>
+
+      {expanded && (
+        <div className="mt-4 ml-15 text-sm text-gray-600 leading-relaxed pt-3" style={{ borderTop: '1px solid #f0f0f0', marginLeft: 60 }}>
+          <RichTextDisplay html={ann.content} />
+          <p className="text-xs text-gray-300 mt-3">Por {ann.author.name}</p>
+        </div>
+      )}
     </div>
   )
 }

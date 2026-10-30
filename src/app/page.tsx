@@ -69,74 +69,77 @@ export default async function HomePage() {
       <main className="flex-1 overflow-y-auto bg-[#f7f7f5]">
 
         {/* ── Hero ── */}
-        <div className="relative overflow-hidden" style={{
-          background: 'linear-gradient(135deg, #fdf6ec 0%, #faebd7 35%, #f5ddb8 65%, #eedaa0 100%)',
-          minHeight: 260,
-        }}>
-          {/* Texture overlay */}
+        <div className="relative overflow-hidden" style={{ minHeight: 280 }}>
+          {/* Foto de fundo */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=80&auto=format&fit=crop"
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none"
+            style={{ filter: 'brightness(0.65) saturate(0.9)' }}
+          />
+          {/* Overlay quente */}
           <div className="absolute inset-0 pointer-events-none" style={{
-            backgroundImage: 'radial-gradient(circle at 70% 50%, rgba(255,255,255,0.5) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(245,158,11,0.08) 0%, transparent 50%)',
+            background: 'linear-gradient(135deg, rgba(20,14,8,0.75) 0%, rgba(40,28,12,0.5) 40%, rgba(180,100,10,0.18) 75%, rgba(245,158,11,0.08) 100%)',
           }} />
-          {/* Decorative circles */}
-          <div className="absolute -right-20 -top-20 w-80 h-80 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(245,158,11,0.12) 0%, transparent 70%)' }} />
-          <div className="absolute right-1/3 bottom-0 w-48 h-48 rounded-full pointer-events-none" style={{ background: 'radial-gradient(circle, rgba(16,40,130,0.04) 0%, transparent 70%)' }} />
 
           <div className="relative max-w-5xl mx-auto px-8 py-10 grid grid-cols-5 gap-8 items-center">
 
             {/* Left: main content */}
             <div className="col-span-3">
-              <p className="text-xs font-bold uppercase tracking-widest text-amber-700 mb-3">
+              <p className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: 'rgba(253,230,138,0.85)' }}>
                 Comunidade ZAR
               </p>
-              <h1 className="text-5xl font-black tracking-tight leading-[1.05] mb-4" style={{ color: '#1a1a1a' }}>
+              <h1 className="text-5xl font-black tracking-tight leading-[1.05] mb-4 text-white">
                 Olá, {firstName}!
               </h1>
-              <p className="text-base text-gray-600 leading-relaxed max-w-md mb-7">
+              <p className="text-base leading-relaxed max-w-md mb-7" style={{ color: 'rgba(255,255,255,0.7)' }}>
                 Aqui você aprende, compartilha casos, acessa jurisprudências e cresce com outros advogados ZAR.
               </p>
 
               <div className="flex items-center gap-3 mb-8">
                 <Link href="/discussoes"
-                  className="flex items-center gap-2 text-sm font-bold px-5 py-3 rounded-xl text-white transition-all"
-                  style={{ background: '#1a1a1a', boxShadow: '0 4px 16px rgba(0,0,0,.18)' }}>
+                  className="flex items-center gap-2 text-sm font-bold px-5 py-3 rounded-xl transition-all text-gray-900"
+                  style={{ background: 'linear-gradient(135deg, #fde68a, #f59e0b)', boxShadow: '0 4px 16px rgba(245,158,11,.35)' }}>
                   <MessageSquare size={14} /> Ver discussões <ArrowRight size={13} />
                 </Link>
                 {session && (
                   <Link href="/discussoes/nova"
-                    className="flex items-center gap-2 text-sm font-semibold px-5 py-3 rounded-xl transition-all border"
-                    style={{ background: 'rgba(255,255,255,0.7)', borderColor: 'rgba(0,0,0,0.12)', color: '#333' }}>
+                    className="flex items-center gap-2 text-sm font-semibold px-5 py-3 rounded-xl transition-all text-white border"
+                    style={{ background: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.25)' }}>
                     <Plus size={14} /> Nova discussão
                   </Link>
                 )}
               </div>
 
-              <div className="flex items-center gap-5 text-sm text-gray-600">
+              <div className="flex items-center gap-5 text-sm" style={{ color: 'rgba(255,255,255,0.55)' }}>
                 <span className="flex items-center gap-1.5">
-                  <Users size={13} className="text-amber-700" />
-                  <strong className="text-gray-900 font-black">{totalMembers}</strong> membros
+                  <Users size={13} style={{ color: '#fde68a' }} />
+                  <strong className="text-white font-black">{totalMembers}</strong> membros
                 </span>
-                <span className="text-gray-300">·</span>
+                <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
                 <span className="flex items-center gap-1.5">
-                  <MessageSquare size={13} className="text-amber-700" />
-                  <strong className="text-gray-900 font-black">{totalThreads}</strong> discussões
+                  <MessageSquare size={13} style={{ color: '#fde68a' }} />
+                  <strong className="text-white font-black">{totalThreads}</strong> discussões
                 </span>
-                <span className="text-gray-300">·</span>
+                <span style={{ color: 'rgba(255,255,255,0.2)' }}>·</span>
                 <span className="flex items-center gap-1.5">
-                  <Scale size={13} className="text-amber-700" />
-                  <strong className="text-gray-900 font-black">{totalJuris}</strong> jurisprudências
+                  <Scale size={13} style={{ color: '#fde68a' }} />
+                  <strong className="text-white font-black">{totalJuris}</strong> jurisprudências
                 </span>
               </div>
             </div>
 
             {/* Right: decorative serif quote */}
             <div className="col-span-2 text-right flex flex-col items-end justify-center gap-4 py-2">
-              <p className="font-display text-3xl leading-snug text-amber-900/70 italic">
+              <p className="font-display text-3xl leading-snug italic" style={{ color: 'rgba(253,230,138,0.9)' }}>
                 Mais que teoria,<br />
                 uma comunidade<br />
                 que caminha<br />
                 com você.
               </p>
-              <div className="w-16 h-0.5 bg-amber-700/30 rounded-full" />
+              <div className="w-16 h-px rounded-full" style={{ background: 'rgba(253,230,138,0.35)' }} />
             </div>
           </div>
         </div>
