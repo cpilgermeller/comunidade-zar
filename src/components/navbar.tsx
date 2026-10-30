@@ -25,54 +25,68 @@ export async function Navbar() {
   ])
 
   return (
-    <aside className="w-64 shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto border-r border-[#dce8ff] bg-white">
+    <aside className="w-60 shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto" style={{
+      background: 'linear-gradient(180deg, #060e38 0%, #0c1e68 100%)',
+      borderRight: '1px solid rgba(255,255,255,0.06)',
+    }}>
 
       {/* Logo */}
-      <div className="p-5 border-b border-[#dce8ff]">
+      <div className="px-5 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 bg-gradient-to-br from-brand-900 to-brand-700 rounded-xl flex items-center justify-center shadow-md shadow-brand-200 group-hover:shadow-brand-300 transition-shadow">
-            <Zap size={20} className="text-white fill-white" />
+          <div className="w-9 h-9 rounded-xl flex items-center justify-center shadow-lg shrink-0"
+            style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', boxShadow: '0 4px 14px rgba(245,158,11,.3)' }}>
+            <Zap size={17} className="text-white fill-white" />
           </div>
           <div>
-            <p className="text-sm font-black text-gray-900 tracking-tight leading-none">Comunidade</p>
-            <p className="text-sm font-black gradient-text leading-tight">ZAR</p>
+            <p className="text-[11px] font-bold text-white/50 uppercase tracking-widest leading-none mb-0.5">Comunidade</p>
+            <p className="text-base font-black text-white tracking-tight leading-none">ZAR</p>
           </div>
         </Link>
       </div>
 
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
 
         {/* Início */}
-        <NavItem href="/" icon={<Home size={16} />} label="Início" />
+        <DarkNavItem href="/" icon={<Home size={15} />} label="Início" />
 
-        {/* Discussões + categorias aninhadas */}
+        {/* Discussões */}
         <div>
-          <NavItem href="/discussoes" icon={<MessageSquare size={16} />} label="Discussões" count={threadCount} />
-
+          <DarkNavItem href="/discussoes" icon={<MessageSquare size={15} />} label="Discussões" count={threadCount} />
           {categories.length > 0 && (
-            <div className="ml-3 mt-0.5 border-l-2 border-[#dce8ff] pl-3 space-y-0.5">
+            <div className="ml-3 mt-0.5 pl-3 space-y-0.5" style={{ borderLeft: '1px solid rgba(255,255,255,0.1)' }}>
               {categories.map((cat) => (
                 <Link
                   key={cat.id}
                   href={`/discussoes?categoria=${cat.slug}`}
-                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-gray-500 hover:bg-brand-50 hover:text-brand-800 transition-colors group"
+                  className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs transition-colors group"
+                  style={{ color: 'rgba(255,255,255,0.5)' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)', e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
+                  onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)', e.currentTarget.style.background = 'transparent')}
                 >
-                  <span className="w-2 h-2 rounded-full shrink-0 transition-transform group-hover:scale-125" style={{ backgroundColor: cat.color }} />
+                  <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: cat.color }} />
                   <span className="truncate flex-1">{cat.name}</span>
                   {cat._count.threads > 0 && (
-                    <span className="text-[10px] text-[#94a3b8] font-medium tabular-nums">{cat._count.threads}</span>
+                    <span className="text-[10px] font-medium tabular-nums" style={{ color: 'rgba(255,255,255,0.3)' }}>{cat._count.threads}</span>
                   )}
                 </Link>
               ))}
               {session && (
                 <>
                   <Link href="/discussoes/nova"
-                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-brand-700 hover:bg-brand-50 transition-colors font-medium">
-                    <Plus size={12} /> Nova discussão
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-semibold transition-colors"
+                    style={{ color: '#fbbf24' }}
+                    onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <Plus size={11} /> Nova discussão
                   </Link>
                   <Link href="/discussoes/salvos"
-                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-gray-500 hover:bg-brand-50 hover:text-brand-800 transition-colors">
-                    <Bookmark size={12} /> Salvos
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs transition-colors"
+                    style={{ color: 'rgba(255,255,255,0.5)' }}
+                    onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)', e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
+                    onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.5)', e.currentTarget.style.background = 'transparent')}
+                  >
+                    <Bookmark size={11} /> Salvos
                   </Link>
                 </>
               )}
@@ -80,43 +94,33 @@ export async function Navbar() {
           )}
         </div>
 
-        {/* Membros */}
-        <NavItem href="/membros" icon={<Users size={16} />} label="Membros" />
-
-        {/* Mural de Oportunidades */}
-        <NavItem href="/mural" icon={<Briefcase size={16} />} label="Mural de Oportunidades" />
-
-        {/* Trilha de Evolução */}
-        <NavItem href="/trilha" icon={<Sparkles size={16} />} label="Trilha de Evolução" />
-
-        {/* Materiais Bônus */}
-        <NavItem href="/materiais" icon={<Gift size={16} />} label="Materiais Bônus" accent="amber" />
-
-        {/* Depoimentos */}
-        <NavItem href="/depoimentos" icon={<Heart size={16} />} label="Depoimentos" />
+        <DarkNavItem href="/membros" icon={<Users size={15} />} label="Membros" />
+        <DarkNavItem href="/mural" icon={<Briefcase size={15} />} label="Oportunidades" />
+        <DarkNavItem href="/trilha" icon={<Sparkles size={15} />} label="Trilha de Evolução" />
+        <DarkNavItem href="/materiais" icon={<Gift size={15} />} label="Materiais Bônus" gold />
+        <DarkNavItem href="/depoimentos" icon={<Heart size={15} />} label="Depoimentos" />
 
         {/* Bancos */}
-        <div className="pt-4">
-          <p className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-widest px-3 mb-1">Bancos</p>
-          <NavItem href="/jurisprudencias" icon={<Scale size={16} />} label="Jurisprudências" count={jurisCount} accent="emerald" />
-          <NavItem href="/fundamentos" icon={<BookOpen size={16} />} label="Fundamentos" count={fundamentoCount} accent="amber" />
+        <div className="pt-5">
+          <p className="text-[9px] font-bold uppercase tracking-widest px-3 mb-2" style={{ color: 'rgba(255,255,255,0.25)' }}>Bancos</p>
+          <DarkNavItem href="/jurisprudencias" icon={<Scale size={15} />} label="Jurisprudências" count={jurisCount} />
+          <DarkNavItem href="/fundamentos" icon={<BookOpen size={15} />} label="Fundamentos" count={fundamentoCount} />
         </div>
 
         {/* Links Úteis */}
         {usefulLinks.length > 0 && (
-          <div className="pt-4">
-            <p className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-widest px-3 mb-1">Links Úteis</p>
+          <div className="pt-5">
+            <p className="text-[9px] font-bold uppercase tracking-widest px-3 mb-2" style={{ color: 'rgba(255,255,255,0.25)' }}>Links Úteis</p>
             {usefulLinks.map((link) => (
-              <a
-                key={link.id}
-                href={link.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-gray-600 hover:bg-brand-50 hover:text-brand-800 transition-colors group"
+              <a key={link.id} href={link.url} target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-colors group"
+                style={{ color: 'rgba(255,255,255,0.55)' }}
+                onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.9)', e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.55)', e.currentTarget.style.background = 'transparent')}
               >
-                <span className="w-6 h-6 flex items-center justify-center text-base leading-none shrink-0">{link.emoji}</span>
-                <span className="flex-1 truncate">{link.label}</span>
-                <ExternalLink size={12} className="text-[#94a3b8] opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                <span className="w-5 h-5 flex items-center justify-center text-sm leading-none shrink-0">{link.emoji}</span>
+                <span className="flex-1 truncate text-xs">{link.label}</span>
+                <ExternalLink size={11} className="opacity-0 group-hover:opacity-60 transition-opacity shrink-0" />
               </a>
             ))}
           </div>
@@ -124,13 +128,15 @@ export async function Navbar() {
 
         {/* Admin */}
         {session?.role === 'admin' && (
-          <div className="pt-4">
-            <p className="text-[10px] font-bold text-[#94a3b8] uppercase tracking-widest px-3 mb-1">Admin</p>
-            <Link href="/admin" className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-medium text-amber-700 hover:bg-amber-50 transition-colors">
-              <div className="w-6 h-6 flex items-center justify-center">
-                <Shield size={16} />
-              </div>
-              Painel Admin
+          <div className="pt-5">
+            <p className="text-[9px] font-bold uppercase tracking-widest px-3 mb-2" style={{ color: 'rgba(255,255,255,0.25)' }}>Admin</p>
+            <Link href="/admin"
+              className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm font-semibold transition-colors"
+              style={{ color: '#fbbf24' }}
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(245,158,11,0.15)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
+              <Shield size={15} /> Painel Admin
             </Link>
           </div>
         )}
@@ -138,19 +144,26 @@ export async function Navbar() {
 
       {/* User footer */}
       {session && (
-        <div className="p-3 border-t border-[#dce8ff]">
+        <div className="px-3 py-3" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
           <div className="flex items-center gap-1 mb-1">
             <Link href={`/perfil/${session.userId}`}
-              className="flex items-center gap-2.5 px-2 py-2 rounded-xl hover:bg-brand-50 transition-colors group cursor-pointer flex-1 min-w-0">
+              className="flex items-center gap-2.5 px-2 py-2 rounded-xl transition-colors cursor-pointer flex-1 min-w-0"
+              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.07)')}
+              onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+            >
               <Avatar name={session.name} size="sm" />
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-gray-800 truncate">{session.name}</p>
-                <p className="text-[10px] text-[#94a3b8] truncate">{session.email}</p>
+                <p className="text-xs font-bold truncate" style={{ color: 'rgba(255,255,255,0.9)' }}>{session.name}</p>
+                <p className="text-[10px] truncate" style={{ color: 'rgba(255,255,255,0.35)' }}>{session.email}</p>
               </div>
             </Link>
             <form action={logout}>
               <button type="submit" title="Sair"
-                className="text-gray-300 hover:text-red-400 p-2 transition-colors">
+                className="p-2 transition-colors"
+                style={{ color: 'rgba(255,255,255,0.3)' }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#f87171')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.3)')}
+              >
                 <LogOut size={14} />
               </button>
             </form>
@@ -162,34 +175,32 @@ export async function Navbar() {
   )
 }
 
-/* ── NavItem ── */
-function NavItem({ href, icon, label, count, accent }: {
+/* ── DarkNavItem ── */
+function DarkNavItem({ href, icon, label, count, gold }: {
   href: string
   icon: React.ReactNode
   label: string
   count?: number
-  accent?: 'emerald' | 'amber'
+  gold?: boolean
 }) {
-  const hover =
-    accent === 'emerald' ? 'hover:bg-emerald-50 hover:text-emerald-700' :
-    accent === 'amber'   ? 'hover:bg-amber-50  hover:text-amber-700'   :
-    'hover:bg-brand-50 hover:text-brand-800'
-
-  const badge =
-    accent === 'emerald' ? 'bg-emerald-100 text-emerald-700' :
-    accent === 'amber'   ? 'bg-amber-100   text-amber-700'   :
-    'bg-brand-100 text-brand-700'
-
   return (
     <Link href={href}
-      className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm text-gray-600 transition-colors ${hover}`}>
-      {/* Icon wrapper — garante tamanho fixo e alinhamento */}
-      <span className="w-6 h-6 flex items-center justify-center shrink-0 text-current">
-        {icon}
-      </span>
-      <span className="flex-1">{label}</span>
+      className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-sm transition-all group"
+      style={{ color: gold ? '#fbbf24' : 'rgba(255,255,255,0.6)' }}
+      onMouseEnter={e => {
+        e.currentTarget.style.color = gold ? '#fde68a' : 'rgba(255,255,255,0.95)'
+        e.currentTarget.style.background = gold ? 'rgba(245,158,11,0.12)' : 'rgba(255,255,255,0.07)'
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.color = gold ? '#fbbf24' : 'rgba(255,255,255,0.6)'
+        e.currentTarget.style.background = 'transparent'
+      }}
+    >
+      <span className="w-5 h-5 flex items-center justify-center shrink-0">{icon}</span>
+      <span className="flex-1 font-medium">{label}</span>
       {count !== undefined && count > 0 && (
-        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full tabular-nums ${badge}`}>
+        <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full tabular-nums"
+          style={{ background: 'rgba(255,255,255,0.12)', color: 'rgba(255,255,255,0.6)' }}>
           {count}
         </span>
       )}

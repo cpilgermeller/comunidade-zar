@@ -1,3 +1,4 @@
+import React from 'react'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/auth'
 import { Navbar } from '@/components/navbar'
@@ -12,6 +13,15 @@ import {
 
 const MONTH_SHORT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
 const WEEKDAY_SHORT = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb']
+
+function SectionTitle({ icon, title }: { icon: React.ReactNode; title: string }) {
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <span className="w-6 h-6 flex items-center justify-center text-brand-700">{icon}</span>
+      <h2 className="text-sm font-black text-gray-800 tracking-tight">{title}</h2>
+    </div>
+  )
+}
 
 export default async function HomePage() {
   const session = await getSession()
@@ -60,71 +70,71 @@ export default async function HomePage() {
   const monthName = now.toLocaleDateString('pt-BR', { month: 'long' })
   const firstName = session?.name.split(' ')[0]
 
-  const inputCls = 'w-full border border-[#ede8e3] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-300 bg-[#fdf9f7] focus:bg-white transition-colors'
-
   return (
     <div className="flex h-full">
       <Navbar />
-      <main className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto px-6 py-8 animate-fade-in">
+      <main className="flex-1 overflow-y-auto bg-[#f4f6fb]">
 
-          {/* Hero */}
-          <div className="relative overflow-hidden bg-gradient-to-br from-brand-950 via-brand-900 to-brand-700 rounded-3xl p-7 mb-8 text-white shadow-xl shadow-brand-300/30">
-            <div className="absolute -top-10 -right-10 w-56 h-56 bg-white/5 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-24 w-40 h-40 bg-gold-500/10 rounded-full blur-2xl pointer-events-none" />
-            <p className="text-brand-200 text-sm font-medium mb-1">
-              {session ? `Olá, ${firstName}! 👋` : 'Bem-vindo!'}
+        {/* ── Hero ── */}
+        <div className="relative overflow-hidden" style={{
+          background: 'radial-gradient(800px 360px at 85% -20%, rgba(245,158,11,.18), transparent 55%), radial-gradient(600px 400px at -5% 110%, rgba(16,40,130,.25), transparent 55%), linear-gradient(135deg, #060e38 0%, #102882 55%, #0c1e68 100%)',
+        }}>
+          <div className="absolute inset-0 pointer-events-none opacity-[0.035]" style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)',
+            backgroundSize: '44px 44px',
+            maskImage: 'linear-gradient(180deg,#000 60%,transparent)',
+          }} />
+          <div className="relative max-w-5xl mx-auto px-8 py-10">
+            <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              {session ? `Olá, ${firstName}` : 'Bem-vindo'}
             </p>
-            <h1 className="text-3xl font-black tracking-tight mb-1">Comunidade ZAR</h1>
-            <p className="text-brand-200/80 text-sm max-w-md">Seu espaço de aprendizado, jurisprudências, fundamentos e conexões.</p>
-            <div className="flex gap-3 mt-5">
-              <Link href="/discussoes" className="flex items-center gap-1.5 bg-white text-brand-900 text-sm font-bold px-4 py-2.5 rounded-xl hover:bg-brand-50 transition-colors shadow-md">
-                Ver discussões <ArrowRight size={14} />
+            <h1 className="text-3xl font-black text-white tracking-tight mb-1">Comunidade ZAR</h1>
+            <p className="text-sm max-w-sm mb-6" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              Aprendizado, jurisprudências, fundamentos e conexões.
+            </p>
+            <div className="flex gap-3">
+              <Link href="/discussoes"
+                className="flex items-center gap-1.5 text-sm font-bold px-4 py-2.5 rounded-xl transition-all text-brand-900"
+                style={{ background: 'linear-gradient(135deg, #fde68a, #f59e0b)', boxShadow: '0 4px 16px rgba(245,158,11,.3)' }}>
+                Ver discussões <ArrowRight size={13} />
               </Link>
-              <Link href="/discussoes/nova" className="flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors border border-white/15">
-                <MessageSquare size={14} /> Nova discussão
+              <Link href="/discussoes/nova"
+                className="flex items-center gap-1.5 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all text-white border"
+                style={{ background: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.15)' }}
+                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.14)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
+              >
+                <MessageSquare size={13} /> Nova discussão
               </Link>
             </div>
           </div>
+        </div>
 
+        <div className="max-w-5xl mx-auto px-8 py-8 animate-fade-in">
           <div className="grid grid-cols-3 gap-6">
-            {/* ── Coluna esquerda ── */}
+
+            {/* ── Coluna principal ── */}
             <div className="col-span-2 space-y-6">
 
               {/* Avisos */}
-              <section className="bg-white rounded-2xl border border-[#f0eae6] shadow-sm overflow-hidden">
-                <div className="flex items-center gap-2 px-5 pt-5 pb-4 border-b border-[#f7f2ef]">
-                  <span className="w-7 h-7 bg-gold-100 rounded-lg flex items-center justify-center">
-                    <Megaphone size={14} className="text-gold-600" />
-                  </span>
-                  <h2 className="text-sm font-bold text-gray-900">Avisos</h2>
-                </div>
-                {announcements.length === 0 ? (
-                  <div className="px-5 py-10 text-center">
-                    <Megaphone size={24} className="text-[#e8ddd9] mx-auto mb-2" />
-                    <p className="text-sm text-[#b5a9a4]">Nenhum aviso no momento.</p>
+              {announcements.length > 0 && (
+                <section>
+                  <SectionTitle icon={<Megaphone size={14} />} title="Avisos" />
+                  <div className="card-premium overflow-hidden">
+                    <div className="divide-y" style={{ borderColor: 'rgba(16,40,130,0.06)' }}>
+                      {announcements.map((ann) => (
+                        <AnnouncementCard key={ann.id} ann={ann} />
+                      ))}
+                    </div>
                   </div>
-                ) : (
-                  <div className="divide-y divide-[#f7f2ef]">
-                    {announcements.map((ann) => (
-                      <AnnouncementCard key={ann.id} ann={ann} />
-                    ))}
-                  </div>
-                )}
-              </section>
+                </section>
+              )}
 
-              {/* Próximas Aulas — estilo calendário */}
-              <section className="bg-white rounded-2xl border border-[#f0eae6] shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-[#f7f2ef]">
-                  <h2 className="text-sm font-bold text-gray-900">📅 Próximas Aulas & Eventos</h2>
-                </div>
-                {events.length === 0 ? (
-                  <div className="px-5 py-10 text-center">
-                    <p className="text-4xl mb-2">📅</p>
-                    <p className="text-sm text-[#b5a9a4]">Nenhum evento programado.</p>
-                  </div>
-                ) : (
-                  <div className="p-4 grid grid-cols-1 gap-3 stagger">
+              {/* Próximas Aulas */}
+              {events.length > 0 && (
+                <section>
+                  <SectionTitle icon={<span className="text-sm">📅</span>} title="Próximas Aulas & Eventos" />
+                  <div className="space-y-2.5">
                     {events.map((ev) => {
                       const d = new Date(ev.eventDate)
                       const dayNum = d.getDate()
@@ -132,65 +142,66 @@ export default async function HomePage() {
                       const weekday = WEEKDAY_SHORT[d.getDay()]
                       const hour = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
                       return (
-                        <div key={ev.id} className="flex items-center gap-4 p-3.5 rounded-xl border border-[#f0eae6] hover:border-brand-200 hover:bg-[#fdf9f7] transition-all group">
-                          {/* Calendar leaf */}
-                          <div className="shrink-0 w-14 rounded-xl overflow-hidden shadow-sm border border-[#ede8e3] text-center">
-                            <div className="bg-brand-800 px-1 py-0.5">
-                              <p className="text-[10px] font-bold text-white uppercase tracking-wide">{monthStr}</p>
+                        <div key={ev.id} className="card-premium card-hover flex items-center gap-4 px-4 py-3.5 cursor-default">
+                          <div className="shrink-0 w-12 rounded-xl overflow-hidden text-center" style={{ boxShadow: '0 2px 8px rgba(16,40,130,.12)' }}>
+                            <div className="py-0.5" style={{ background: 'linear-gradient(135deg, #060e38, #102882)' }}>
+                              <p className="text-[9px] font-black text-white uppercase tracking-wider">{monthStr}</p>
                             </div>
-                            <div className="bg-white px-1 py-1">
-                              <p className="text-2xl font-black text-gray-900 leading-none">{dayNum}</p>
-                              <p className="text-[10px] text-[#b5a9a4] mt-0.5">{weekday}</p>
+                            <div className="bg-white py-1">
+                              <p className="text-xl font-black text-gray-900 leading-none">{dayNum}</p>
+                              <p className="text-[9px] text-gray-400 mt-0.5">{weekday}</p>
                             </div>
                           </div>
-                          {/* Info */}
                           <div className="flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-gray-900 truncate group-hover:text-brand-800 transition-colors">{ev.title}</p>
-                            <p className="text-xs text-[#b5a9a4] mt-0.5">🕐 {hour}{ev.description ? ` · ${ev.description}` : ''}</p>
+                            <p className="text-sm font-bold text-gray-900 truncate">{ev.title}</p>
+                            <p className="text-xs text-gray-400 mt-0.5">🕐 {hour}{ev.description ? ` · ${ev.description}` : ''}</p>
                           </div>
                           {ev.link && (
                             <a href={ev.link} target="_blank" rel="noopener noreferrer"
-                              className="flex items-center gap-1 text-xs text-brand-700 hover:text-brand-900 bg-brand-50 hover:bg-brand-100 px-2.5 py-1.5 rounded-lg transition-colors shrink-0 font-semibold">
-                              Acessar <ExternalLink size={11} />
+                              className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shrink-0"
+                              style={{ color: '#102882', background: 'rgba(16,40,130,0.07)' }}
+                              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(16,40,130,0.12)')}
+                              onMouseLeave={e => (e.currentTarget.style.background = 'rgba(16,40,130,0.07)')}
+                            >
+                              Acessar <ExternalLink size={10} />
                             </a>
                           )}
                         </div>
                       )
                     })}
                   </div>
-                )}
-              </section>
+                </section>
+              )}
 
               {/* Trending */}
-              <section className="bg-white rounded-2xl border border-[#f0eae6] shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-[#f7f2ef]">
-                  <h2 className="flex items-center gap-2 text-sm font-bold text-gray-900">
-                    <span className="w-7 h-7 bg-rose-100 rounded-lg flex items-center justify-center">
-                      <Flame size={14} className="text-rose-500" />
-                    </span>
-                    Trending esta semana
-                  </h2>
-                  <Link href="/discussoes?ordem=popular" className="flex items-center gap-1 text-xs text-brand-700 hover:text-brand-900 font-medium">
-                    Ver mais <ChevronRight size={13} />
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <SectionTitle icon={<Flame size={14} className="text-rose-500" />} title="Trending esta semana" />
+                  <Link href="/discussoes?ordem=popular" className="flex items-center gap-1 text-xs font-semibold text-brand-700 hover:text-brand-900 transition-colors">
+                    Ver mais <ChevronRight size={12} />
                   </Link>
                 </div>
                 {trendingThreads.length === 0 ? (
-                  <div className="px-5 py-10 text-center">
-                    <TrendingUp size={24} className="text-[#e8ddd9] mx-auto mb-2" />
-                    <p className="text-sm text-[#b5a9a4]">Nenhuma discussão recente.</p>
+                  <div className="card-premium px-5 py-10 text-center">
+                    <TrendingUp size={22} className="mx-auto mb-2 text-gray-300" />
+                    <p className="text-sm text-gray-400">Nenhuma discussão recente.</p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-[#f7f2ef] stagger">
+                  <div className="card-premium overflow-hidden">
                     {trendingThreads.map((t, i) => (
                       <Link key={t.id} href={`/discussoes/${t.id}`}>
-                        <div className="flex items-center gap-4 px-5 py-3.5 hover:bg-[#fdf9f7] transition-colors group">
-                          <span className={`text-lg font-black w-7 text-center shrink-0 ${i === 0 ? 'text-gold-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-600/60' : 'text-gray-200'}`}>{i + 1}</span>
+                        <div className="flex items-center gap-3 px-5 py-3.5 transition-colors group"
+                          style={{ borderBottom: i < trendingThreads.length - 1 ? '1px solid rgba(16,40,130,0.05)' : 'none' }}
+                          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(16,40,130,0.03)')}
+                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                        >
+                          <span className={`text-base font-black w-6 text-center shrink-0 ${i === 0 ? 'text-amber-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-700/50' : 'text-gray-200'}`}>{i + 1}</span>
                           <div className="flex-1 min-w-0">
                             <p className="text-sm font-semibold text-gray-800 group-hover:text-brand-800 transition-colors truncate">{t.title}</p>
                             <div className="flex items-center gap-2 mt-0.5">
-                              <span className="text-[11px] px-2 py-0.5 rounded-full text-white font-medium" style={{ backgroundColor: t.category.color }}>{t.category.name}</span>
-                              <span className="flex items-center gap-0.5 text-[11px] text-[#b5a9a4]"><MessageSquare size={10} />{t._count.comments}</span>
-                              <span className="flex items-center gap-0.5 text-[11px] text-[#b5a9a4]"><Eye size={10} />{t.views}</span>
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full text-white font-bold" style={{ backgroundColor: t.category.color }}>{t.category.name}</span>
+                              <span className="flex items-center gap-0.5 text-[10px] text-gray-400"><MessageSquare size={9} />{t._count.comments}</span>
+                              <span className="flex items-center gap-0.5 text-[10px] text-gray-400"><Eye size={9} />{t.views}</span>
                             </div>
                           </div>
                         </div>
@@ -203,38 +214,46 @@ export default async function HomePage() {
 
             {/* ── Ranking ── */}
             <div className="col-span-1">
-              <div className="bg-white rounded-2xl border border-[#f0eae6] shadow-sm overflow-hidden sticky top-6">
-                <div className="px-5 pt-5 pb-4 border-b border-[#f7f2ef] bg-gradient-to-br from-gold-50 to-amber-50">
-                  <h2 className="flex items-center gap-2 text-sm font-bold text-gray-900">
-                    <Trophy size={15} className="text-gold-500" /> Ranking do Mês
+              <div className="card-premium overflow-hidden sticky top-6">
+                <div className="px-4 py-4" style={{
+                  background: 'linear-gradient(135deg, rgba(245,158,11,.08), rgba(251,191,36,.05))',
+                  borderBottom: '1px solid rgba(16,40,130,0.06)',
+                }}>
+                  <h2 className="flex items-center gap-2 text-sm font-black text-gray-900">
+                    <Trophy size={14} className="text-amber-500" /> Ranking do Mês
                   </h2>
-                  <p className="text-[11px] text-[#b5a9a4] mt-0.5 capitalize">{monthName} · Top alunos ZAR</p>
+                  <p className="text-[11px] text-gray-400 mt-0.5 capitalize">{monthName}</p>
                 </div>
                 {ranked.length === 0 ? (
-                  <div className="px-5 py-8 text-center">
-                    <Star size={24} className="text-[#e8ddd9] mx-auto mb-2" />
-                    <p className="text-xs text-[#b5a9a4]">Nenhuma atividade ainda.</p>
-                    <p className="text-xs text-[#b5a9a4] mt-1">Seja o primeiro! 🚀</p>
+                  <div className="px-4 py-8 text-center">
+                    <Star size={22} className="text-gray-200 mx-auto mb-2" />
+                    <p className="text-xs text-gray-400">Nenhuma atividade ainda.</p>
+                    <p className="text-xs text-gray-400 mt-1">Seja o primeiro! 🚀</p>
                   </div>
                 ) : (
-                  <div className="p-3 space-y-1 stagger">
+                  <div className="p-2.5 space-y-0.5 stagger">
                     {ranked.map((user, i) => (
                       <Link key={user.id} href={`/perfil/${user.id}`}>
-                        <div className={`flex items-center gap-2.5 p-2.5 rounded-xl transition-colors cursor-pointer ${i === 0 ? 'bg-gold-50 border border-gold-100' : i === 1 ? 'bg-gray-50 border border-gray-100' : i === 2 ? 'bg-amber-50/50 border border-amber-100/50' : 'hover:bg-[#fdf9f7]'}`}>
-                          <span className="text-base w-5 text-center shrink-0">{medals[i] ?? <span className="text-xs font-bold text-gray-300">{i + 1}</span>}</span>
+                        <div className={`flex items-center gap-2 p-2 rounded-xl transition-colors cursor-pointer ${
+                          i === 0 ? 'bg-amber-50' : i === 1 ? 'bg-gray-50' : i === 2 ? 'bg-orange-50/60' : ''
+                        }`}
+                          onMouseEnter={e => { if (i > 2) e.currentTarget.style.background = 'rgba(16,40,130,0.04)' }}
+                          onMouseLeave={e => { if (i > 2) e.currentTarget.style.background = 'transparent' }}
+                        >
+                          <span className="text-sm w-5 text-center shrink-0 leading-none">{medals[i] ?? <span className="text-xs font-black text-gray-300">{i + 1}</span>}</span>
                           <Avatar name={user.name} size="sm" />
                           <div className="flex-1 min-w-0">
                             <p className="text-xs font-bold text-gray-800 truncate">{user.name.split(' ')[0]}</p>
-                            <p className="text-[10px] text-[#b5a9a4]">{user._count.threads}t · {user._count.comments}r</p>
+                            <p className="text-[10px] text-gray-400">{user._count.threads}t · {user._count.comments}r</p>
                           </div>
-                          <span className={`text-xs font-black ${i === 0 ? 'text-gold-500' : 'text-brand-700'}`}>{user.score}</span>
+                          <span className={`text-xs font-black ${i === 0 ? 'text-amber-500' : 'text-brand-700'}`}>{user.score}</span>
                         </div>
                       </Link>
                     ))}
                   </div>
                 )}
-                <div className="px-5 py-3 border-t border-[#f7f2ef]">
-                  <p className="text-[10px] text-[#d6c8c3] text-center">Resposta=3 · Discussão=2 · Juris/Fund=4 · Depoimento=10</p>
+                <div className="px-4 py-2.5" style={{ borderTop: '1px solid rgba(16,40,130,0.06)' }}>
+                  <p className="text-[9px] text-gray-300 text-center">Resposta=3 · Discussão=2 · Juris/Fund=4 · Depoimento=10</p>
                 </div>
               </div>
             </div>

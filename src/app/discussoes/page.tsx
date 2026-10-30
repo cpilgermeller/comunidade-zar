@@ -66,26 +66,57 @@ export default async function DiscussoesPage({
   return (
     <div className="flex h-full">
       <Navbar />
-      <main className="flex-1 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto bg-[#f4f6fb]">
         {session && <LastSeenUpdater />}
-        <div className="max-w-3xl mx-auto px-6 py-8 animate-fade-in">
+
+        {/* ── Page header ── */}
+        <div className="relative overflow-hidden" style={{
+          background: 'radial-gradient(600px 280px at 90% -10%, rgba(245,158,11,.12), transparent 60%), linear-gradient(135deg, #060e38 0%, #102882 60%, #0c1e68 100%)',
+        }}>
+          <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{
+            backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,1) 1px,transparent 1px)',
+            backgroundSize: '44px 44px',
+            maskImage: 'linear-gradient(180deg,#000 50%,transparent)',
+          }} />
+          <div className="relative max-w-3xl mx-auto px-6 py-8 flex items-end justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-widest mb-1.5" style={{ color: 'rgba(255,255,255,0.4)' }}>Comunidade ZAR</p>
+              <h1 className="text-2xl font-black text-white tracking-tight">
+                {selectedCategory ? selectedCategory.name : 'Discussões'}
+              </h1>
+              <p className="text-sm mt-0.5" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                {threads.length} discussão{threads.length !== 1 ? 'ões' : ''}
+                {selectedCategory && ` em ${selectedCategory.name}`}
+              </p>
+            </div>
+            {session && (
+              <Link href="/discussoes/nova"
+                className="flex items-center gap-1.5 text-sm font-bold px-4 py-2.5 rounded-xl transition-all shrink-0 text-brand-900"
+                style={{ background: 'linear-gradient(135deg, #fde68a, #f59e0b)', boxShadow: '0 4px 14px rgba(245,158,11,.28)' }}>
+                <Plus size={14} /> Nova discussão
+              </Link>
+            )}
+          </div>
+        </div>
+
+        <div className="max-w-3xl mx-auto px-6 py-6 animate-fade-in">
 
           {/* Novidades banner */}
           {session && newCount > 0 && (
-            <div className="flex items-center gap-3 bg-brand-50 border border-brand-200 rounded-xl px-4 py-3 mb-6 text-sm">
-              <Bell size={16} className="text-brand-700 shrink-0" />
-              <p className="text-brand-800 font-medium flex-1">
-                <strong>{newCount} nova{newCount !== 1 ? 's discussões' : ' discussão'}</strong> desde sua última visita
+            <div className="card-premium flex items-center gap-3 px-4 py-3 mb-5 text-sm" style={{ borderLeft: '3px solid #102882' }}>
+              <Bell size={15} className="text-brand-700 shrink-0" />
+              <p className="text-brand-800 font-semibold">
+                {newCount} nova{newCount !== 1 ? 's discussões' : ' discussão'} desde sua última visita
               </p>
             </div>
           )}
 
           {/* Destaques da semana */}
           {featuredThreads.length > 0 && (
-            <div className="mb-8">
+            <div className="mb-6">
               <div className="flex items-center gap-2 mb-3">
-                <Star size={15} className="text-amber-500 fill-amber-400" />
-                <h2 className="text-sm font-bold text-gray-700 uppercase tracking-wide">Destaques da semana</h2>
+                <Star size={14} className="text-amber-500 fill-amber-400" />
+                <h2 className="text-xs font-black text-gray-700 uppercase tracking-widest">Destaques da semana</h2>
               </div>
               <div className="space-y-2">
                 {featuredThreads.map((thread) => (
@@ -96,67 +127,47 @@ export default async function DiscussoesPage({
                   />
                 ))}
               </div>
-              <div className="border-b border-[#f0eae6] mt-6 mb-2" />
+              <div className="mt-5 mb-1" style={{ borderBottom: '1px solid rgba(16,40,130,0.07)' }} />
             </div>
           )}
 
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h1 className="text-2xl font-black text-gray-900 tracking-tight">
-                {selectedCategory ? selectedCategory.name : 'Discussões'}
-              </h1>
-              <p className="text-sm text-gray-400 mt-0.5">
-                {threads.length} discussão{threads.length !== 1 ? 'ões' : ''}
-                {selectedCategory && ` em ${selectedCategory.name}`}
-              </p>
-            </div>
-            {session && (
-              <Link
-                href="/discussoes/nova"
-                className="flex items-center gap-2 bg-gradient-to-r from-brand-900 to-brand-700 text-white text-sm font-semibold px-4 py-2.5 rounded-xl hover:from-brand-950 hover:to-brand-800 transition-all shadow-md shadow-brand-200 hover:-translate-y-px active:translate-y-0"
-              >
-                <Plus size={15} /> Nova discussão
-              </Link>
-            )}
-          </div>
-
           {/* Search + Sort */}
-          <div className="flex gap-3 mb-5">
+          <div className="flex gap-2.5 mb-4">
             <form className="flex-1 relative" action="/discussoes" method="GET">
               {categoria && <input type="hidden" name="categoria" value={categoria} />}
               {ordem && <input type="hidden" name="ordem" value={ordem} />}
-              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+              <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 name="q"
                 defaultValue={q}
                 placeholder="Buscar discussões..."
-                className="w-full pl-10 pr-4 py-2.5 text-sm border border-[#ede8e3] rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-300 bg-[#fdf9f7] focus:bg-white shadow-sm transition-colors"
+                className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-300 transition-colors"
+                style={{ background: '#fff', border: '1px solid rgba(16,40,130,0.1)', boxShadow: '0 1px 3px rgba(16,40,130,0.05)' }}
               />
             </form>
-            <div className="flex gap-1.5 bg-white border border-[#ede8e3] rounded-xl p-1 shadow-sm">
+            <div className="flex gap-1 p-1 rounded-xl" style={{ background: '#fff', border: '1px solid rgba(16,40,130,0.1)', boxShadow: '0 1px 3px rgba(16,40,130,0.05)' }}>
               <SortBtn
                 href={`/discussoes?${new URLSearchParams({ ...(q ? { q } : {}), ...(categoria ? { categoria } : {}), ordem: 'recente' }).toString()}`}
                 active={!ordem || ordem === 'recente'}
-                icon={<Clock size={13} />}
+                icon={<Clock size={12} />}
                 label="Recentes"
               />
               <SortBtn
                 href={`/discussoes?${new URLSearchParams({ ...(q ? { q } : {}), ...(categoria ? { categoria } : {}), ordem: 'popular' }).toString()}`}
                 active={ordem === 'popular'}
-                icon={<TrendingUp size={13} />}
+                icon={<TrendingUp size={12} />}
                 label="Popular"
               />
               <SortBtn
                 href={`/discussoes?${new URLSearchParams({ ...(q ? { q } : {}), ...(categoria ? { categoria } : {}), ordem: 'atividade' }).toString()}`}
                 active={ordem === 'atividade'}
-                icon={<Activity size={13} />}
+                icon={<Activity size={12} />}
                 label="Atividade"
               />
               <SortBtn
                 href={`/discussoes?${new URLSearchParams({ ...(q ? { q } : {}), ...(categoria ? { categoria } : {}), ordem: 'sem_resposta' }).toString()}`}
                 active={ordem === 'sem_resposta'}
-                icon={<Sparkles size={13} />}
+                icon={<Sparkles size={12} />}
                 label="Sem resposta"
               />
             </div>
@@ -164,10 +175,13 @@ export default async function DiscussoesPage({
 
           {/* Category filters */}
           {categories.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-6">
+            <div className="flex flex-wrap gap-1.5 mb-5">
               <Link
                 href={q ? `/discussoes?q=${q}` : '/discussoes'}
-                className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all ${!categoria ? 'bg-brand-800 text-white shadow-sm shadow-brand-200' : 'bg-white border border-[#ede8e3] text-gray-500 hover:border-brand-300 hover:text-brand-800'}`}
+                className="text-xs px-3 py-1.5 rounded-full font-bold transition-all"
+                style={!categoria
+                  ? { background: '#102882', color: '#fff', boxShadow: '0 2px 8px rgba(16,40,130,.2)' }
+                  : { background: '#fff', color: '#6b7280', border: '1px solid rgba(16,40,130,0.12)' }}
               >
                 Todas
               </Link>
@@ -175,8 +189,10 @@ export default async function DiscussoesPage({
                 <Link
                   key={cat.id}
                   href={`/discussoes?categoria=${cat.slug}${q ? `&q=${q}` : ''}${ordem ? `&ordem=${ordem}` : ''}`}
-                  className={`text-xs px-3 py-1.5 rounded-full font-medium transition-all flex items-center gap-1.5 ${categoria === cat.slug ? 'text-white shadow-sm' : 'bg-white border border-[#ede8e3] text-gray-500 hover:border-brand-200'}`}
-                  style={categoria === cat.slug ? { backgroundColor: cat.color } : {}}
+                  className="text-xs px-3 py-1.5 rounded-full font-bold transition-all flex items-center gap-1.5"
+                  style={categoria === cat.slug
+                    ? { backgroundColor: cat.color, color: '#fff', boxShadow: `0 2px 8px ${cat.color}44` }
+                    : { background: '#fff', color: '#6b7280', border: '1px solid rgba(16,40,130,0.12)' }}
                 >
                   <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: categoria === cat.slug ? 'rgba(255,255,255,0.7)' : cat.color }} />
                   {cat.name}
@@ -187,25 +203,26 @@ export default async function DiscussoesPage({
 
           {/* Thread list */}
           {threads.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-16 text-center">
-              <div className="w-14 h-14 bg-brand-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Sparkles size={24} className="text-brand-300" />
+            <div className="card-premium p-16 text-center">
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3" style={{ background: 'rgba(16,40,130,0.06)' }}>
+                <Sparkles size={20} className="text-brand-400" />
               </div>
-              <p className="font-semibold text-gray-700">Nenhuma discussão encontrada</p>
+              <p className="font-bold text-gray-700">Nenhuma discussão encontrada</p>
               <p className="text-sm text-gray-400 mt-1">
                 {q ? 'Tente outros termos de busca.' : 'Seja o primeiro a criar uma!'}
               </p>
               {session && (
                 <Link
                   href="/discussoes/nova"
-                  className="inline-flex items-center gap-1.5 mt-5 bg-brand-800 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-brand-900 transition-colors"
+                  className="inline-flex items-center gap-1.5 mt-4 text-sm font-bold px-4 py-2 rounded-xl text-white transition-colors"
+                  style={{ background: '#102882' }}
                 >
-                  <Plus size={14} /> Criar discussão
+                  <Plus size={13} /> Criar discussão
                 </Link>
               )}
             </div>
           ) : (
-            <div className="space-y-3 stagger">
+            <div className="space-y-2.5 stagger">
               {threads.map((thread) => (
                 <ThreadCard
                   key={thread.id}

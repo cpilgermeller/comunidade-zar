@@ -17,7 +17,7 @@ type ThreadCardProps = {
 export function ThreadCard({ thread, isBookmarked }: ThreadCardProps) {
   return (
     <Link href={`/discussoes/${thread.id}`}>
-      <div className="group bg-white rounded-2xl border border-[#f0eae6] p-5 card-hover hover:border-brand-200 cursor-pointer">
+      <div className="group card-premium card-hover p-5 cursor-pointer hover:border-brand-200/50">
         <div className="flex items-start gap-3.5">
           <div className="mt-0.5"><Avatar name={thread.author.name} /></div>
           <div className="flex-1 min-w-0">

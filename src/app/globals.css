@@ -67,17 +67,25 @@
   -webkit-backdrop-filter: blur(14px);
 }
 
+/* Card premium: sombra em camadas, sem borda visível */
+.card-premium {
+  background: #ffffff;
+  border: 1px solid rgba(16, 40, 130, 0.07);
+  box-shadow: 0 1px 2px rgba(16,40,130,.04), 0 4px 16px rgba(16,40,130,.06);
+  border-radius: 16px;
+}
+
 .card-hover {
-  transition: box-shadow .18s ease, transform .18s ease, border-color .18s ease;
+  transition: box-shadow .2s ease, transform .2s ease;
 }
 .card-hover:hover {
-  box-shadow: 0 8px 28px -4px rgba(16,40,130,.14);
+  box-shadow: 0 2px 4px rgba(16,40,130,.06), 0 12px 32px rgba(16,40,130,.10);
   transform: translateY(-1px);
 }
 
 /* Brand gradient text — azul marinho → dourado */
 .gradient-text {
-  background: linear-gradient(135deg, #102882, #d97706);
+  background: linear-gradient(135deg, #ffffff, #fde68a);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
