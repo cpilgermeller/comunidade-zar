@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { getSession } from '@/lib/auth'
 import { db } from '@/lib/db'
 import { logout } from '@/app/actions/auth'
@@ -31,16 +32,17 @@ export async function Navbar() {
     }}>
 
       {/* Logo */}
-      <div className="px-6 pt-8 pb-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <Link href="/" className="flex flex-col items-start group">
-          <Zap size={13} className="mb-2" style={{ color: 'rgba(245,158,11,0.6)' }} />
-          <p className="font-display italic leading-[0.9] font-bold"
-            style={{ fontSize: 52, color: '#e8b931', letterSpacing: '-0.01em', textShadow: '0 4px 20px rgba(232,185,49,0.2)' }}>
-            ZAR
-          </p>
-          <p className="text-[9px] font-bold uppercase tracking-[0.3em] mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            Comunidade
-          </p>
+      <div className="px-4 pt-4 pb-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <Link href="/" className="block">
+          <Image
+            src="/logo-zar.webp"
+            alt="ZAR Comunidade"
+            width={192}
+            height={96}
+            priority
+            className="w-full h-auto"
+            style={{ maxHeight: 90, objectFit: 'contain', objectPosition: 'left center' }}
+          />
         </Link>
       </div>
 
