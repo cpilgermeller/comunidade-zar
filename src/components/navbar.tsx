@@ -40,8 +40,8 @@ export async function Navbar() {
             width={192}
             height={96}
             priority
-            className="w-full h-auto"
-            style={{ maxHeight: 120, objectFit: 'contain', objectPosition: 'left center' }}
+            className="w-full"
+            style={{ height: 130, objectFit: 'contain', objectPosition: 'left center' }}
           />
         </Link>
       </div>
