@@ -27,7 +27,7 @@ export async function Navbar() {
 
   return (
     <aside className="w-60 shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto" style={{
-      background: '#0d1b3e',
+      background: '#03152F',
       borderRight: '1px solid rgba(255,255,255,0.05)',
     }}>
 
@@ -41,7 +41,7 @@ export async function Navbar() {
             height={96}
             priority
             className="w-full h-auto"
-            style={{ maxHeight: 90, objectFit: 'contain', objectPosition: 'left center', mixBlendMode: 'screen' }}
+            style={{ maxHeight: 90, objectFit: 'contain', objectPosition: 'left center' }}
           />
         </Link>
       </div>
