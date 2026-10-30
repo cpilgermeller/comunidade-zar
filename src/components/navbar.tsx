@@ -26,19 +26,19 @@ export async function Navbar() {
 
   return (
     <aside className="w-60 shrink-0 flex flex-col h-screen sticky top-0 overflow-y-auto" style={{
-      background: 'linear-gradient(180deg, #060e38 0%, #0c1e68 100%)',
-      borderRight: '1px solid rgba(255,255,255,0.06)',
+      background: '#0b0e1c',
+      borderRight: '1px solid rgba(255,255,255,0.05)',
     }}>
 
       {/* Logo */}
-      <div className="px-6 pt-7 pb-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+      <div className="px-6 pt-8 pb-6" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <Link href="/" className="flex flex-col items-start group">
-          <Zap size={14} className="mb-1" style={{ color: 'rgba(245,158,11,0.7)' }} />
-          <p className="font-display text-4xl italic leading-none font-bold"
-            style={{ color: '#f5c842', textShadow: '0 2px 12px rgba(245,158,11,0.3)' }}>
+          <Zap size={13} className="mb-2" style={{ color: 'rgba(245,158,11,0.6)' }} />
+          <p className="font-display italic leading-[0.9] font-bold"
+            style={{ fontSize: 52, color: '#e8b931', letterSpacing: '-0.01em', textShadow: '0 4px 20px rgba(232,185,49,0.2)' }}>
             ZAR
           </p>
-          <p className="text-[10px] font-bold uppercase tracking-[0.22em] mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>
+          <p className="text-[9px] font-bold uppercase tracking-[0.3em] mt-2" style={{ color: 'rgba(255,255,255,0.3)' }}>
             Comunidade
           </p>
         </Link>

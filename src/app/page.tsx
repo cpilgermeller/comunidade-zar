@@ -72,18 +72,19 @@ export default async function HomePage() {
         {/* ── Hero ── */}
         <div className="relative overflow-hidden bg-[#f5f0e8]" style={{ minHeight: 300 }}>
           {/* Águia — direita, ocupa metade do hero */}
-          <div className="absolute inset-y-0 right-0 w-3/5 pointer-events-none select-none">
+          <div className="absolute inset-y-0 right-0 w-3/5 pointer-events-none select-none overflow-hidden">
             <Image
               src="https://images.unsplash.com/photo-1611095970735-5b44ed7e8ddd?w=1200&q=80&auto=format&fit=crop&crop=center"
               alt=""
               fill
               priority
+              sizes="60vw"
               className="object-cover"
-              style={{ objectPosition: '40% center' }}
+              style={{ objectPosition: '35% center' }}
             />
-            {/* Fade da esquerda para o centro — mesclando com o fundo creme */}
+            {/* Fade da esquerda para o centro */}
             <div className="absolute inset-0" style={{
-              background: 'linear-gradient(to right, #f5f0e8 0%, rgba(245,240,232,0.7) 25%, rgba(245,240,232,0.1) 60%, transparent 100%)',
+              background: 'linear-gradient(to right, #f5f0e8 0%, rgba(245,240,232,0.85) 15%, rgba(245,240,232,0.4) 35%, rgba(245,240,232,0.05) 65%, transparent 100%)',
             }} />
           </div>
 
