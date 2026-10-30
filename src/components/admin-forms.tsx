@@ -234,14 +234,23 @@ export function CreateBonusMaterialForm() {
       if (uploadMode === 'file') {
         const file = (form.querySelector('input[name="file"]') as HTMLInputElement)?.files?.[0]
         if (!file) { setError('Selecione um arquivo.'); setPending(false); return }
-        setUploadProgress('Enviando arquivo...')
+        setUploadProgress('Enviando arquivo…')
         const uploadFd = new FormData()
         uploadFd.append('file', file)
         const res = await fetch('/api/upload/material', { method: 'POST', body: uploadFd })
         const json = await res.json()
-        if (!res.ok) { setError(json.error ?? 'Erro no upload'); setPending(false); setUploadProgress(''); return }
+        if (!res.ok) {
+          if (json.setup) {
+            setError('⚙️ Para fazer upload de arquivos, ative o Vercel Blob: Vercel Dashboard → seu projeto → Storage → Connect Store → Blob. Depois o upload passa a funcionar automaticamente. Por ora, use "URL externa" com Google Drive ou Dropbox.')
+          } else {
+            setError(json.error ?? 'Erro no upload')
+          }
+          setPending(false)
+          setUploadProgress('')
+          return
+        }
         fd.set('fileUrl', json.url)
-        setUploadProgress('Salvando...')
+        setUploadProgress('Salvando…')
       }
 
       await createBonusMaterial(fd)

@@ -20,15 +20,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Não autorizado' }, { status: 401 })
   }
 
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+    return NextResponse.json({
+      error: 'Armazenamento de arquivos não configurado. Ative o Vercel Blob no painel do projeto.',
+      setup: true,
+    }, { status: 503 })
+  }
+
   try {
     const formData = await req.formData()
     const file = formData.get('file') as File | null
 
     if (!file) return NextResponse.json({ error: 'Nenhum arquivo enviado' }, { status: 400 })
-    if (!ALLOWED.has(file.type)) return NextResponse.json({ error: 'Tipo não permitido' }, { status: 400 })
-    if (file.size > MAX_SIZE) return NextResponse.json({ error: 'Arquivo muito grande (máx 100 MB)' }, { status: 400 })
+    if (!ALLOWED.has(file.type)) return NextResponse.json({ error: 'Tipo não permitido. Use PDF, Word, Excel, PowerPoint ou vídeo.' }, { status: 400 })
+    if (file.size > MAX_SIZE) return NextResponse.json({ error: 'Arquivo muito grande (máximo 100 MB).' }, { status: 400 })
 
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'bin'
     const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_')
     const filename = `materiais/${crypto.randomUUID()}-${safeName}`
 
@@ -36,6 +42,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: blob.url })
   } catch (err) {
     console.error('Material upload error:', err)
-    return NextResponse.json({ error: 'Erro ao salvar arquivo.' }, { status: 500 })
+    return NextResponse.json({ error: 'Erro interno ao salvar arquivo. Tente novamente.' }, { status: 500 })
   }
 }
