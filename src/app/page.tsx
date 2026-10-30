@@ -99,10 +99,7 @@ export default async function HomePage() {
                 Ver discussões <ArrowRight size={13} />
               </Link>
               <Link href="/discussoes/nova"
-                className="flex items-center gap-1.5 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all text-white border"
-                style={{ background: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.15)' }}
-                onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.14)')}
-                onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
+                className="btn-secondary-hero flex items-center gap-1.5 text-sm font-semibold px-4 py-2.5 rounded-xl text-white"
               >
                 <MessageSquare size={13} /> Nova discussão
               </Link>
@@ -158,10 +155,7 @@ export default async function HomePage() {
                           </div>
                           {ev.link && (
                             <a href={ev.link} target="_blank" rel="noopener noreferrer"
-                              className="flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-lg transition-colors shrink-0"
-                              style={{ color: '#102882', background: 'rgba(16,40,130,0.07)' }}
-                              onMouseEnter={e => (e.currentTarget.style.background = 'rgba(16,40,130,0.12)')}
-                              onMouseLeave={e => (e.currentTarget.style.background = 'rgba(16,40,130,0.07)')}
+                              className="btn-navy-pill flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-lg shrink-0"
                             >
                               Acessar <ExternalLink size={10} />
                             </a>
@@ -190,10 +184,8 @@ export default async function HomePage() {
                   <div className="card-premium overflow-hidden">
                     {trendingThreads.map((t, i) => (
                       <Link key={t.id} href={`/discussoes/${t.id}`}>
-                        <div className="flex items-center gap-3 px-5 py-3.5 transition-colors group"
+                        <div className="hover-row flex items-center gap-3 px-5 py-3.5 transition-colors group"
                           style={{ borderBottom: i < trendingThreads.length - 1 ? '1px solid rgba(16,40,130,0.05)' : 'none' }}
-                          onMouseEnter={e => (e.currentTarget.style.background = 'rgba(16,40,130,0.03)')}
-                          onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                         >
                           <span className={`text-base font-black w-6 text-center shrink-0 ${i === 0 ? 'text-amber-400' : i === 1 ? 'text-gray-300' : i === 2 ? 'text-amber-700/50' : 'text-gray-200'}`}>{i + 1}</span>
                           <div className="flex-1 min-w-0">
@@ -235,10 +227,8 @@ export default async function HomePage() {
                     {ranked.map((user, i) => (
                       <Link key={user.id} href={`/perfil/${user.id}`}>
                         <div className={`flex items-center gap-2 p-2 rounded-xl transition-colors cursor-pointer ${
-                          i === 0 ? 'bg-amber-50' : i === 1 ? 'bg-gray-50' : i === 2 ? 'bg-orange-50/60' : ''
+                          i === 0 ? 'bg-amber-50' : i === 1 ? 'bg-gray-50' : i === 2 ? 'bg-orange-50/60' : 'hover-navy-sm'
                         }`}
-                          onMouseEnter={e => { if (i > 2) e.currentTarget.style.background = 'rgba(16,40,130,0.04)' }}
-                          onMouseLeave={e => { if (i > 2) e.currentTarget.style.background = 'transparent' }}
                         >
                           <span className="text-sm w-5 text-center shrink-0 leading-none">{medals[i] ?? <span className="text-xs font-black text-gray-300">{i + 1}</span>}</span>
                           <Avatar name={user.name} size="sm" />
