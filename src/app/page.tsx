@@ -73,11 +73,11 @@ export default async function HomePage() {
           {/* Foto de fundo */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600&q=80&auto=format&fit=crop"
+            src="https://images.unsplash.com/photo-1611095970735-5b44ed7e8ddd?w=1600&q=80&auto=format&fit=crop&crop=center"
             alt=""
             aria-hidden="true"
-            className="absolute inset-0 w-full h-full object-cover object-center pointer-events-none select-none"
-            style={{ filter: 'brightness(0.65) saturate(0.9)' }}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+            style={{ objectPosition: '70% center', filter: 'brightness(0.6) saturate(0.85)' }}
           />
           {/* Overlay quente */}
           <div className="absolute inset-0 pointer-events-none" style={{
